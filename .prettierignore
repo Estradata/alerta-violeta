@@ -1,3 +1,9 @@
 **/node_modules/
 **/dist/
 **/generated/
+**/package.json
+**/package-lock.json
+**/tsconfig.json
+**/eslint.config.js
+**/tsconfig.app.json
+**/vite.config.ts
