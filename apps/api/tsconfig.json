@@ -5,7 +5,7 @@
       "outDir": "./dist",
       "strict": true,
       "esModuleInterop": true,
-      "baseUrl": ".", // relative to `api/`
+      "baseUrl": ".",
       "paths": {
          "@packages/*": ["../../packages/*"]
       }
