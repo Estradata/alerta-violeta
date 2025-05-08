@@ -6,6 +6,7 @@ import {
    type PublicUser,
    publicUserSchema,
 } from '@packages/validation/user-schema'
+import { db } from './db'
 
 const app = express()
 const port = 3001
@@ -13,17 +14,20 @@ const port = 3001
 app.use(express.json())
 
 // Public route
-app.get('/', (req: Request, res: Response) => {
+app.get('/', async (req: Request, res: Response) => {
    const user: PublicUser = {
       email: 'example@gmail.com',
       id: '1234',
       name: '1234',
    }
 
+   const users = await db.user.findMany()
+
    res.json({
       message: 'This is a public route',
       user,
       validation: publicUserSchema.safeParse(user).success,
+      users,
    })
 })
 

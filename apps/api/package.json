@@ -6,12 +6,20 @@
     "dev": "ts-node-dev index.ts",
     "build": "tsc",
     "start": "node dist/apps/api/index.js",
-    "lint": ""
+    "lint": "",
+      "postinstall": "npx prisma generate",
+      "migrate": "npx prisma migrate dev",
+      "db-push": "npx prisma db push",
+      "db-pull": "npx prisma db pull",
+      "db-generate": "npx prisma generate",
+      "db-studio": "npx prisma studio"
   },
   "dependencies": {
+    "@prisma/client": "^6.7.0",
     "dotenv": "^16.5.0",
     "express": "^4.18.2",
     "module-alias": "^2.2.3",
+    "prisma": "^6.7.0",
     "zod": "^3.24.4"
   },
   "devDependencies": {
@@ -21,6 +29,6 @@
     "typescript": "^5.0.0"
   },
   "_moduleAliases": {
-      "@packages": "dist/packages"
-   }
+    "@packages": "dist/packages"
+  }
 }
