@@ -1,9 +1,7 @@
 {
-  "name": "alerta-violeta-api",
+  "name": "alerta-violeta-app",
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev index.ts",
     "lint-app": "npm --prefix apps/api run lint && npm --prefix apps/web run lint",
     "format-app": "prettier --ignore-path .prettierignore --write \"**/*.+(js|json|ts|tsx)\""
   },
