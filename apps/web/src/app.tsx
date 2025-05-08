@@ -2,10 +2,7 @@ import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-import {
-  type PublicUser,
-  publicUserSchema,
-} from "../../../packages/validation/user-schema";
+import { type PublicUser, publicUserSchema } from '@packages/validation/user-schema';
 
 function App() {
   const [count, setCount] = useState(0);

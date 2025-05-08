@@ -4,8 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev index.ts",
-    "start": "NODE_ENV=production tsx index.ts",
-    "lint": ""
+    "lint-app": "npm --prefix apps/api run lint && npm --prefix apps/web run lint"
   },
   "dependencies": {
     "express": "^4.18.2",
