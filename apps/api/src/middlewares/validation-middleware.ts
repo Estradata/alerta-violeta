@@ -1,4 +1,4 @@
-import { StatusCodes } from '@/consts'
+import { HttpCodes } from '@/consts'
 import { Request, Response, NextFunction } from 'express'
 import { z, ZodError } from 'zod'
 
@@ -13,11 +13,11 @@ export function validationMiddleware(schema: z.ZodObject<any, any>) {
           message: `${issue.path.join('.')} is ${issue.message}`,
         }))
         res
-          .status(StatusCodes.BAD_REQUEST)
+          .status(HttpCodes.BAD_REQUEST)
           .json({ error: 'Invalid data', details: errorMessages })
       } else {
         res
-          .status(StatusCodes.INTERNAL_SERVER_ERROR)
+          .status(HttpCodes.INTERNAL_SERVER_ERROR)
           .json({ error: 'Internal Server Error' })
       }
     }

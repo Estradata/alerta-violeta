@@ -1,0 +1,66 @@
+import { AppError, HttpCode, NotFoundError } from '@/lib/errors'
+import type { NextFunction, Response } from 'express'
+import { ZodError } from 'zod'
+
+type Handler = (error: Error) => AppError
+const ERRORS: Record<string, Handler> = {
+  JsonWebTokenError: () => {
+    return new AppError({
+      description: 'Invalid access token',
+      httpCode: HttpCode.UNAUTHORIZED,
+    })
+  },
+
+  CastError: () => {
+    return new AppError({
+      description: 'Bad request',
+      httpCode: HttpCode.BAD_REQUEST,
+    })
+  },
+
+  NotFoundError: () => {
+    return new NotFoundError()
+  },
+
+  defaultError: (error) => {
+    console.log('Unhandled error: ', error.name, error.message)
+
+    return new AppError({
+      description: 'An unknown error occurred',
+      httpCode: HttpCode.INTERNAL_SERVER_ERROR,
+    })
+  },
+}
+
+function handleErrors(
+  error: Error | AppError,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  /**
+   * Manual throwed error
+   */
+  if (error instanceof AppError) {
+    res.status(error.httpCode).send(error)
+    return
+  }
+
+  if (error instanceof ZodError) {
+    const customError = new AppError({
+      name: 'ValidationError',
+      description: 'Invalid data received',
+      httpCode: HttpCode.BAD_REQUEST,
+      body: error.issues,
+    })
+
+    res.status(customError.httpCode).send(customError)
+    return
+  }
+
+  const handler = ERRORS[error.name] || ERRORS.defaultError
+  const customError = handler(error)
+  res.status(customError.httpCode).send(customError)
+}
+
+export default handleErrors

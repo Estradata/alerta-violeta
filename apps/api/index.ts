@@ -1,14 +1,31 @@
 import express from 'express'
-import bodyParser from 'body-parser'
-import authRouter from '@/features/auth/routes'
+import cors from 'cors'
+import AuthRoutes from '@/features/auth/routes'
+import handleErrors from '@/middlewares/handle-errors-middleware'
 
 const app = express()
-const PORT = 3003
+const API_VERSION = '/api/'
+const PORT = process.env.PORT || 3003
 
-app.use(bodyParser.json())
-app.get('/', (_, res) => res.json({ ok: true }))
-app.use('/api/auth', authRouter)
+declare global {
+  namespace Express {
+    interface Request {
+      userId: number
+    }
+  }
+}
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`)
-})
+function main() {
+  app.use(cors())
+  app.use(express.json())
+  app.use('/', (_, res) => res.json({ ok: true }))
+  app.use(`${API_VERSION}`, AuthRoutes)
+
+  // @ts-ignore
+  app.use(handleErrors)
+  app.listen(PORT, () => {
+    console.log('Server initialized on: ', `http://localhost:${PORT}`)
+  })
+}
+
+main()

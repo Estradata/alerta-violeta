@@ -1,11 +1,42 @@
-import { LoginData, RegistrationData } from '@packages/validation/auth/auth-schema'
-import { Request, Response } from 'express'
+import { hash } from '@/utils/hash'
+import {
+  LoginData,
+  RegistrationData,
+} from '@packages/validation/auth/auth-schema'
+import { db } from '@/lib/db'
+import { NextFunction, Request, Response } from 'express'
+import { checkIsEmailAvailable } from '@/features/auth/utils'
+import { ValidationError } from '@/lib/errors'
 
-// TODO: make some library/wrapper to automatically infer type of req.body after middleware
-export const registerUser = (req: Request, res: Response) => {
-  const body = req.body as RegistrationData
-  console.log(body)
-  res.json({ message: 'User registered successfully', data: req.body })
+export const registerUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const data = req.body as RegistrationData
+    const available = checkIsEmailAvailable(data.email)
+
+    if (!available)
+      throw new ValidationError({
+        email: 'Email not available',
+      })
+
+    const hashedPassword = await hash(data.password)
+    const newUser = await db.user.create({
+      data: {
+        ...data,
+        password: hashedPassword,
+      },
+    })
+
+    res.json({
+      message: 'User registration successful',
+      user: newUser,
+    })
+  } catch (err) {
+    next(err)
+  }
 }
 
 export const loginUser = (req: Request, res: Response) => {
