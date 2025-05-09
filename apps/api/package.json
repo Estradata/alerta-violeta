@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "ts-node-dev -r tsconfig-paths/register index.ts",
     "build": "tsc",
-    "start": "node dist/apps/api/index.js",
+    "start": "ts-node --transpileOnly -r tsconfig-paths/register index.ts",
     "lint": "",
     "postinstall": "npx prisma generate",
     "migrate": "npx prisma migrate dev",

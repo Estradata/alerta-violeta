@@ -2,7 +2,7 @@ import { checkIsEmailAvailable } from '@/features/auth/utils'
 import { db } from '@/lib/db'
 import { ValidationError } from '@/lib/errors'
 import { hash } from '@/utils/hash'
-import { RegistrationData } from '@packages/validation/auth/auth-schema'
+import { RegistrationData } from '@packages/auth/schema'
 import { RequestHandler } from 'express'
 
 export const registerUser: RequestHandler = async (req, res, next) => {

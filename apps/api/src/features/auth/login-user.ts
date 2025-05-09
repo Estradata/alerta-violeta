@@ -2,7 +2,7 @@ import { db } from '@/lib/db'
 import { UnauthorizedError } from '@/lib/errors'
 import { encodeUserToken } from '@/lib/jwt'
 import { compare } from '@/utils/hash'
-import { LoginData } from '@packages/validation/auth/auth-schema'
+import { LoginData } from '@packages/auth/schema'
 import { RequestHandler } from 'express'
 
 export const loginUser: RequestHandler = async (req, res) => {

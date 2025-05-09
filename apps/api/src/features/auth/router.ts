@@ -1,8 +1,5 @@
 import express from 'express'
-import {
-  registrationSchema,
-  loginSchema,
-} from '@packages/validation/auth/auth-schema'
+import { registrationSchema, loginSchema } from '@packages/auth/schema'
 import { validationMiddleware } from '@/middlewares/validation-middleware'
 import { registerUser } from '@/features/auth/register-user'
 import { loginUser } from '@/features/auth/login-user'
