@@ -2,6 +2,7 @@ import type { AuthUser } from '@packages/auth/types'
 import { useGlobalStore } from '@/store/global-store'
 import { storagePrefix } from '@/config'
 import { useRouter } from '@tanstack/react-router'
+import { useCallback } from 'react'
 
 const key = `${storagePrefix}_token`
 
@@ -32,17 +33,20 @@ export function useAuth() {
   const user = useGlobalStore((s) => s.user)
   const setUser = useGlobalStore((s) => s.setUser)
 
-  function login(user: AuthUser, token: string) {
-    setUser(user)
-    setStoredToken(token)
-    router.navigate({ to: getRedirectPath(user.role) })
-  }
+  const login = useCallback(
+    (user: AuthUser, token: string) => {
+      setUser(user)
+      setStoredToken(token)
+      router?.navigate({ to: getRedirectPath(user.role) })
+    },
+    [router, setUser]
+  )
 
-  function logout() {
+  const logout = useCallback(() => {
     setUser(null)
     setStoredToken(null)
-    router.navigate({ to: '/' })
-  }
+    router?.navigate({ to: '/' })
+  }, [router, setUser])
 
   return {
     isAuthenticated: Boolean(user),

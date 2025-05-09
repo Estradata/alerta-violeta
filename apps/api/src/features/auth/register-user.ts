@@ -1,9 +1,10 @@
 import { checkIsEmailAvailable } from '@/features/auth/utils'
 import { db } from '@/lib/db'
 import { ValidationError } from '@/lib/errors'
+import { encodeUserToken } from '@/lib/jwt'
 import { hash } from '@/utils/hash'
 import { RegistrationData } from '@packages/auth/schema'
-import { AuthUser } from '@packages/auth/types'
+import { LoginResponse } from '@packages/auth/types'
 import { RequestHandler } from 'express'
 
 export const registerUser: RequestHandler = async (req, res, next) => {
@@ -35,17 +36,27 @@ export const registerUser: RequestHandler = async (req, res, next) => {
      * Create user
      */
     const hashedPassword = await hash(data.password)
-    const newUser = await db.user.create({
+    const { password, ...user } = await db.user.create({
       data: {
         ...data,
         password: hashedPassword,
       },
     })
 
+    const userForToken = {
+      id: user.id,
+      email: user.email,
+    }
+
+    const token = encodeUserToken(userForToken)
+
     res.json({
       message: 'User registration successful',
-      data: newUser satisfies AuthUser,
-    })
+      data: {
+        user,
+        token,
+      },
+    } satisfies LoginResponse)
   } catch (err) {
     next(err)
   }
