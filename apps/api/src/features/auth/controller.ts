@@ -15,7 +15,7 @@ export const registerUser = async (
 ) => {
   try {
     const data = req.body as RegistrationData
-    const available = checkIsEmailAvailable(data.email)
+    const available = await checkIsEmailAvailable(data.email)
 
     if (!available)
       throw new ValidationError({

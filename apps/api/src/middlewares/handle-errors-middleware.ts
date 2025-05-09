@@ -1,4 +1,9 @@
-import { AppError, HttpCode, NotFoundError } from '@/lib/errors'
+import {
+  AppError,
+  HttpCode,
+  NotFoundError,
+  ValidationError,
+} from '@/lib/errors'
 import type { NextFunction, Response } from 'express'
 import { ZodError } from 'zod'
 
@@ -32,6 +37,12 @@ const ERRORS: Record<string, Handler> = {
   },
 }
 
+export function isZodError(err: unknown): err is ZodError {
+  return Boolean(
+    err && (err instanceof ZodError || (err as ZodError).name === 'ZodError')
+  )
+}
+
 function handleErrors(
   error: Error | AppError,
   req: Request,
@@ -46,13 +57,14 @@ function handleErrors(
     return
   }
 
-  if (error instanceof ZodError) {
-    const customError = new AppError({
-      name: 'ValidationError',
-      description: 'Invalid data received',
-      httpCode: HttpCode.BAD_REQUEST,
-      body: error.issues,
-    })
+  if (isZodError(error)) {
+    const data: Record<string, string> = {}
+
+    for (const issue of error.errors) {
+      data[`${issue.path.join('.')}`] = issue.message
+    }
+
+    const customError = new ValidationError(data)
 
     res.status(customError.httpCode).send(customError)
     return

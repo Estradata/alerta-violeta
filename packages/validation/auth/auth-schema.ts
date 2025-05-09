@@ -3,7 +3,6 @@ import { z } from 'zod'
 export const registrationSchema = z.object({
   accountId: z.string(),
   name: z.string(),
-  username: z.string(),
   email: z.string().email(),
   password: z.string().min(8),
 })
@@ -11,7 +10,7 @@ export const registrationSchema = z.object({
 export type RegistrationData = z.infer<typeof registrationSchema>
 
 export const loginSchema = z.object({
-  username: z.string(),
+  email: z.string().email(),
   password: z.string().min(8),
 })
 

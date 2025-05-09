@@ -11,7 +11,6 @@ interface AppErrorProps {
   description: string
   httpCode?: HttpCode
   name?: string
-  body?: object
   data?: object
 }
 
@@ -19,19 +18,14 @@ export class AppError extends Error {
   public readonly name: string
   public readonly httpCode: HttpCode
   public readonly description: string
-  public readonly body?: object
   public readonly data?: object
 
-  constructor({ description, httpCode, name, body, data }: AppErrorProps) {
+  constructor({ description, httpCode, name, data }: AppErrorProps) {
     super(description)
     Object.setPrototypeOf(this, new.target.prototype)
 
     this.description = description
     this.name = name || 'Error'
-
-    if (body) {
-      this.body = body
-    }
 
     if (data) {
       this.data = data
@@ -66,9 +60,9 @@ export class NotFoundError extends AppError {
 export class ValidationError extends AppError {
   constructor(data?: Record<string, string>) {
     super({
-      httpCode: HttpCode.NO_CONTENT,
+      httpCode: HttpCode.BAD_REQUEST,
       name: 'ValidationError',
-      description: 'The request resource could not be found',
+      description: 'The request payload contains invalid or missing fields.',
       data,
     })
   }

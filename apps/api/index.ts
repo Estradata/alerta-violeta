@@ -4,7 +4,7 @@ import AuthRoutes from '@/features/auth/routes'
 import handleErrors from '@/middlewares/handle-errors-middleware'
 
 const app = express()
-const API_VERSION = '/api/'
+const API_VERSION = '/api'
 const PORT = process.env.PORT || 3003
 
 declare global {
@@ -18,8 +18,8 @@ declare global {
 function main() {
   app.use(cors())
   app.use(express.json())
-  app.use('/', (_, res) => res.json({ ok: true }))
-  app.use(`${API_VERSION}`, AuthRoutes)
+  app.get('/', (_, res) => res.json({ ok: true }))
+  app.use(`${API_VERSION}/auth`, AuthRoutes)
 
   // @ts-ignore
   app.use(handleErrors)
