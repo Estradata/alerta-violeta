@@ -6,7 +6,17 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 
+import {
+  type PublicUser,
+  publicUserSchema,
+} from "@package/validation/user-schema";
+
 export default function HomeScreen() {
+  const data: PublicUser = {
+    id: "12",
+    name: "Daniel Martinez",
+    email: "hello@gmail.com",
+  };
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -18,10 +28,15 @@ export default function HomeScreen() {
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome Chris!</ThemedText>
+        <ThemedText type="title">Welcome Osvel!</ThemedText>
         <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
+        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
+        <ThemedText type="subtitle">{JSON.stringify(data, null, 4)}</ThemedText>
+        <ThemedText>
+          {publicUserSchema.safeParse(data).success ? "Sí" : "No"}
+        </ThemedText>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
           Edit{" "}
