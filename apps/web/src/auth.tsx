@@ -28,7 +28,7 @@ export function getRedirectPath(role: AuthUser['role']) {
   }
 }
 
-export function useAuth() {
+export function useAuth(): AuthContext {
   const router = useRouter()
   const user = useGlobalStore((s) => s.user)
   const setUser = useGlobalStore((s) => s.setUser)
@@ -54,4 +54,11 @@ export function useAuth() {
     login,
     logout,
   }
+}
+
+export type AuthContext = {
+  isAuthenticated: boolean
+  user: AuthUser | null
+  login: (user: AuthUser, token: string) => void
+  logout: () => void
 }
