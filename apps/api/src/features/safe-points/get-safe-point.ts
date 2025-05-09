@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import { RequestHandler } from 'express'
-import { SafePoint } from '@packages/types/safe-points'
+import { SafePoint } from '@packages/safe-points/types'
 import { NotFoundError } from '@/lib/errors'
 
 export const getSafePoint: RequestHandler<{ userId: string }> = async (

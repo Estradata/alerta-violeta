@@ -3,15 +3,21 @@ import { SafePointData } from '@packages/safe-points/schema'
 import { db } from '@/lib/db'
 import { SafePoint } from '@packages/safe-points/types'
 
-export const createSafePoint: RequestHandler = async (req, res, next) => {
+export const updateSafePoint: RequestHandler<{ id: string }> = async (
+  req,
+  res,
+  next
+) => {
   try {
-    const data = req.body as SafePointData
-    const safePoint = await db.safePoint.create({
+    const id = req.params.id
+    const { accountId, ...data } = req.body as SafePointData
+    const safePoint = await db.safePoint.update({
+      where: { id },
       data,
     })
 
     res.json({
-      message: 'Punto creado correctamente',
+      message: 'Punto actualizado correctamente',
       data: safePoint satisfies SafePoint,
     })
   } catch (err) {

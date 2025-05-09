@@ -45,9 +45,9 @@ export function isZodError(err: unknown): err is ZodError {
 
 function handleErrors(
   error: Error | AppError,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) {
   /**
    * Manual throwed error

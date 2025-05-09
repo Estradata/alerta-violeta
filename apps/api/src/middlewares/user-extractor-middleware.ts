@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express'
 
 export default function userExtractor(
   req: Request,
-  res: Response,
+  _: Response,
   next: NextFunction
 ) {
   const authorization = req.get('authorization')
