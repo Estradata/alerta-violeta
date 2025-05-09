@@ -3,6 +3,7 @@ import { UnauthorizedError } from '@/lib/errors'
 import { encodeUserToken } from '@/lib/jwt'
 import { compare } from '@/utils/hash'
 import { LoginData } from '@packages/auth/schema'
+import { AuthUser } from '@packages/auth/types'
 import { RequestHandler } from 'express'
 
 export const loginUser: RequestHandler = async (req, res) => {
@@ -31,7 +32,7 @@ export const loginUser: RequestHandler = async (req, res) => {
   res.status(201).json({
     message: 'Login successful',
     data: {
-      user: userWithoutPassword,
+      user: userWithoutPassword satisfies AuthUser,
       token,
     },
   })

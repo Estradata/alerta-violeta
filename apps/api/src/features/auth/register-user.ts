@@ -3,6 +3,7 @@ import { db } from '@/lib/db'
 import { ValidationError } from '@/lib/errors'
 import { hash } from '@/utils/hash'
 import { RegistrationData } from '@packages/auth/schema'
+import { AuthUser } from '@packages/auth/types'
 import { RequestHandler } from 'express'
 
 export const registerUser: RequestHandler = async (req, res, next) => {
@@ -43,7 +44,7 @@ export const registerUser: RequestHandler = async (req, res, next) => {
 
     res.json({
       message: 'User registration successful',
-      data: newUser,
+      data: newUser satisfies AuthUser,
     })
   } catch (err) {
     next(err)

@@ -1,10 +1,10 @@
-import './index.css'
+import './globals.css'
 
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'
-import { AuthProvider, useAuth } from './auth'
+import { useAuth } from './auth'
 
 // Set up a Router instance
 const router = createRouter({
@@ -29,11 +29,7 @@ function InnerApp() {
 }
 
 function App() {
-  return (
-    <AuthProvider>
-      <InnerApp />
-    </AuthProvider>
-  )
+  return <InnerApp />
 }
 
 const rootElement = document.getElementById('root')!

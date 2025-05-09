@@ -1,62 +1,41 @@
-import { sleep } from '@/utils/sleep'
-import * as React from 'react'
+import { storagePrefix } from '@/config'
+import { useGlobalStore } from '@/store/global-store'
+import type { AuthUser } from '@packages/auth/types'
 
-export interface AuthContext {
-  isAuthenticated: boolean
-  login: (username: string) => Promise<void>
-  logout: () => Promise<void>
-  user: string | null
-}
+const key = `${storagePrefix}_token`
 
-const AuthContext = React.createContext<AuthContext | null>(null)
-
-const key = 'tanstack.auth.user'
-
-function getStoredUser() {
+export function getStoredToken() {
   return localStorage.getItem(key)
 }
 
-function setStoredUser(user: string | null) {
-  if (user) {
-    localStorage.setItem(key, user)
+function setStoredToken(token: string | null) {
+  if (token) {
+    localStorage.setItem(key, token)
   } else {
     localStorage.removeItem(key)
   }
 }
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = React.useState<string | null>(getStoredUser())
-  const isAuthenticated = !!user
-
-  const logout = React.useCallback(async () => {
-    await sleep(250)
-
-    setStoredUser(null)
-    setUser(null)
-  }, [])
-
-  const login = React.useCallback(async (username: string) => {
-    await sleep(500)
-
-    setStoredUser(username)
-    setUser(username)
-  }, [])
-
-  React.useEffect(() => {
-    setUser(getStoredUser())
-  }, [])
-
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  )
-}
-
 export function useAuth() {
-  const context = React.useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
+  const user = useGlobalStore((s) => s.user)
+  const setUser = useGlobalStore((s) => s.setUser)
+
+  function login(user: AuthUser, token: string) {
+    setUser(user)
+    setStoredToken(token)
   }
-  return context
+
+  function logout() {
+    setUser(null)
+    setStoredToken(null)
+  }
+
+  return {
+    isAuthenticated: Boolean(user),
+    user,
+    login,
+    logout,
+  }
 }
+
+export type AuthContext = ReturnType<typeof useAuth>
