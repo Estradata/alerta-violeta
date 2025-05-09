@@ -1,3 +1,5 @@
+import { useAuth } from '@/auth'
+import { Button } from '@/components/ui/button'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/app/dashboard')({
@@ -5,5 +7,12 @@ export const Route = createFileRoute('/app/dashboard')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/app/dashboard"!</div>
+  const auth = useAuth()
+
+  return (
+    <div>
+      Hello "/app/dashboard"!
+      <Button onClick={() => auth.logout()}>logout</Button>
+    </div>
+  )
 }

@@ -6,34 +6,38 @@ import { LoginData } from '@packages/auth/schema'
 import { AuthUser } from '@packages/auth/types'
 import { RequestHandler } from 'express'
 
-export const loginUser: RequestHandler = async (req, res) => {
-  const data = req.body as LoginData
+export const loginUser: RequestHandler = async (req, res, next) => {
+  try {
+    const data = req.body as LoginData
 
-  /**
-   * Check credentials
-   */
-  const user = await db.user.findUnique({ where: { email: data.email } })
-  if (!user) throw new UnauthorizedError('Invalid credentials')
+    /**
+     * Check credentials
+     */
+    const user = await db.user.findUnique({ where: { email: data.email } })
+    if (!user) throw new UnauthorizedError('Invalid credentials')
 
-  const passwordCorrect = await compare(data.password, user.password)
-  if (!passwordCorrect) throw new UnauthorizedError('Invalid credentials')
+    const passwordCorrect = await compare(data.password, user.password)
+    if (!passwordCorrect) throw new UnauthorizedError('Invalid credentials')
 
-  /**
-   * Sign token
-   */
-  const { password, ...userWithoutPassword } = user
-  const userForToken = {
-    id: userWithoutPassword.id,
-    email: userWithoutPassword.email,
+    /**
+     * Sign token
+     */
+    const { password, ...userWithoutPassword } = user
+    const userForToken = {
+      id: userWithoutPassword.id,
+      email: userWithoutPassword.email,
+    }
+
+    const token = encodeUserToken(userForToken)
+
+    res.status(201).json({
+      message: 'Login successful',
+      data: {
+        user: userWithoutPassword satisfies AuthUser,
+        token,
+      },
+    })
+  } catch (err) {
+    next(err)
   }
-
-  const token = encodeUserToken(userForToken)
-
-  res.status(201).json({
-    message: 'Login successful',
-    data: {
-      user: userWithoutPassword satisfies AuthUser,
-      token,
-    },
-  })
 }

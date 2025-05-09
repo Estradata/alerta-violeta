@@ -7,3 +7,11 @@ export type AuthUser = {
   status: 'BLOCKED' | 'ACTIVE'
   role: 'ADMIN' | 'MEMBER'
 }
+
+export type LoginResponse = {
+  message: string
+  data: {
+    user: AuthUser
+    token: string
+  }
+}

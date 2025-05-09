@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { ControlledInput } from '@/components/form'
 import { type LoginData, loginSchema } from '@packages/auth/schema'
+import { useLogin } from '@/features/auth/api/login'
 
 export function LoginForm() {
   const form = useForm<LoginData>({
@@ -13,12 +14,11 @@ export function LoginForm() {
       password: '',
     },
   })
-
   const { control, handleSubmit } = form
+  const loginMutation = useLogin(form)
 
   async function onSubmit(data: LoginData) {
-    // loginAction.execute(data)
-    console.log(data)
+    loginMutation.mutate(data)
   }
 
   return (
@@ -41,7 +41,11 @@ export function LoginForm() {
           required
         />
 
-        <Button type='submit' className='w-full'>
+        <Button
+          type='submit'
+          className='w-full'
+          isLoading={loginMutation.isPending}
+        >
           Iniciar Sesión
         </Button>
       </form>
