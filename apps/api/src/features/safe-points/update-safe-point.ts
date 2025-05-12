@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import { SafePointData } from '@packages/safe-points/schema'
+import { safePointSchema } from '@packages/safe-points/schema'
 import { db } from '@/lib/db'
 import { SafePoint } from '@packages/safe-points/types'
 
@@ -10,7 +10,7 @@ export const updateSafePoint: RequestHandler<{ id: string }> = async (
 ) => {
   try {
     const id = req.params.id
-    const { accountId, ...data } = req.body as SafePointData
+    const { accountId, ...data } = safePointSchema.parse(req.body)
     const safePoint = await db.safePoint.update({
       where: { id },
       data,

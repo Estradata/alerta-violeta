@@ -2,13 +2,13 @@ import { db } from '@/lib/db'
 import { UnauthorizedError } from '@/lib/errors'
 import { encodeUserToken } from '@/lib/jwt'
 import { compare } from '@/utils/hash'
-import { LoginData } from '@packages/auth/schema'
+import { loginSchema } from '@packages/auth/schema'
 import { AuthUser } from '@packages/auth/types'
 import { RequestHandler } from 'express'
 
 export const loginUser: RequestHandler = async (req, res, next) => {
   try {
-    const data = req.body as LoginData
+    const data = loginSchema.parse(req.body)
 
     /**
      * Check credentials

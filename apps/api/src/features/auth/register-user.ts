@@ -3,13 +3,13 @@ import { db } from '@/lib/db'
 import { ValidationError } from '@/lib/errors'
 import { encodeUserToken } from '@/lib/jwt'
 import { hash } from '@/utils/hash'
-import { RegistrationData } from '@packages/auth/schema'
+import { registrationSchema } from '@packages/auth/schema'
 import { LoginResponse } from '@packages/auth/types'
 import { RequestHandler } from 'express'
 
 export const registerUser: RequestHandler = async (req, res, next) => {
   try {
-    const data = req.body as RegistrationData
+    const data = registrationSchema.parse(req.body)
 
     /**
      * Check email available
