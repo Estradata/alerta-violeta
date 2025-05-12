@@ -7,6 +7,7 @@ import { selectColumn } from '@/components/data-table/utils/select-column'
 import { useSafePoints } from '@/features/safe-points/api/get-safe-points'
 import { CreateSafePoint } from '@/features/safe-points/components/create-safe-point'
 import { DeleteSafePoints } from '@/features/safe-points/components/delete-safe-points'
+import { UpdateSafePoint } from '@/features/safe-points/components/update-safe-point'
 import { useUiStore } from '@/features/safe-points/store/ui'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
@@ -83,6 +84,7 @@ function RouteComponent() {
         rowsPerPageLabel='Puntos por página'
       >
         <CreateSafePoint />
+        <UpdateSafePoint />
         <DeleteSafePoints />
       </Table>
     </div>

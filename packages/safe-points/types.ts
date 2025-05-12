@@ -10,7 +10,7 @@ export type SafePoint = {
   address: string
   lat: number
   lng: number
-  type: SafePointData['type'] | {}
+  type: SafePointData['type'] | {} | string
 }
 
 /**

@@ -14,7 +14,7 @@ model Account {
 
   users            User[]
   safePoints       SafePoint[]
-  EmergencyContact EmergencyContact[]
+  emergencyContacts EmergencyContact[]
 
   @@map("accounts")
 }

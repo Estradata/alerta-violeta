@@ -5,7 +5,7 @@ import { useUiStore } from '@/features/safe-points/store/ui'
 export function DeleteSafePoints() {
   const dialog = useUiStore((s) => s.deleteDialog)
   const closeDialog = useUiStore((s) => s.closeDeleteDialog)
-  const deleteAreasMutation = useDeleteSafePoints({
+  const deleteMutation = useDeleteSafePoints({
     onSuccess() {
       closeDialog()
     },
@@ -14,16 +14,16 @@ export function DeleteSafePoints() {
   async function onConfirm() {
     if (!dialog.data) return
 
-    deleteAreasMutation.mutate(dialog.data.map((p) => p.id))
+    deleteMutation.mutate(dialog.data.map((p) => p.id))
   }
 
   return (
     <ConfirmationDialog
-      title={dialog.data?.length === 1 ? 'Eliminar area' : 'Eliminar areas'}
+      title={dialog.data?.length === 1 ? 'Eliminar punto' : 'Eliminar puntos'}
       open={dialog.open}
       onOpenChange={closeDialog}
       onConfirm={() => onConfirm()}
-      isLoading={deleteAreasMutation.isPending}
+      isLoading={deleteMutation.isPending}
       text={
         dialog.data?.length === 1 ? (
           <>

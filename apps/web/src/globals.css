@@ -124,3 +124,64 @@ body,
 #root {
   height: 100%;
 }
+
+.circle-ripple {
+  background-color: #a855f7; /* Tailwind's purple-500 */
+  width: 2em;
+  height: 2em;
+  border-radius: 100%;
+  animation: ripple 1s ease-out infinite;
+  position: absolute;
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  0% {
+    box-shadow:
+      0 0 0 0 rgba(168, 85, 247, 0.3),
+      0 0 0 1em rgba(168, 85, 247, 0.3),
+      0 0 0 3em rgba(168, 85, 247, 0.3),
+      0 0 0 5em rgba(168, 85, 247, 0.3);
+  }
+  100% {
+    box-shadow:
+      0 0 0 1em rgba(168, 85, 247, 0.3),
+      0 0 0 3em rgba(168, 85, 247, 0.3),
+      0 0 0 5em rgba(168, 85, 247, 0.3),
+      0 0 0 8em rgba(168, 85, 247, 0);
+  }
+}
+
+.circles > div {
+  position: absolute;
+  background-color: #a855f7;
+  border-radius: 50%;
+  height: 100%;
+  width: 100%;
+
+  opacity: 0;
+  animation: growAndFade 1.3s infinite ease-out;
+}
+
+.circles .circle1 {
+  animation-delay: 0.3s;
+}
+
+.circles .circle2 {
+  animation-delay: 0.6s;
+}
+
+.circles .circle3 {
+  animation-delay: 0.9s;
+}
+
+@keyframes growAndFade {
+  0% {
+    opacity: 0.5;
+    transform: scale(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
