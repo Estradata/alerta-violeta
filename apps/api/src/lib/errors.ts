@@ -8,7 +8,7 @@ export enum HttpCode {
 }
 
 interface AppErrorProps {
-  description: string
+  description?: string
   httpCode?: HttpCode
   name?: string
   data?: object
@@ -17,7 +17,7 @@ interface AppErrorProps {
 export class AppError extends Error {
   public readonly name: string
   public readonly httpCode: HttpCode
-  public readonly description: string
+  public readonly description?: string
   public readonly data?: object
 
   constructor({ description, httpCode, name, data }: AppErrorProps) {
@@ -42,7 +42,7 @@ export class UnauthorizedError extends AppError {
     super({
       httpCode: HttpCode.UNAUTHORIZED,
       name: 'UnauthorizedError',
-      description: description ?? 'The operation requested was not authorized',
+      description: description ?? 'La operación solicitada no está autorizada',
     })
   }
 }
@@ -52,7 +52,7 @@ export class NotFoundError extends AppError {
     super({
       httpCode: HttpCode.NOT_FOUND,
       name: 'NotFoundError',
-      description: 'The request resource could not be found',
+      description: 'El recurso solicitado no pudo ser encontrado',
     })
   }
 }
@@ -62,7 +62,6 @@ export class ValidationError extends AppError {
     super({
       httpCode: HttpCode.BAD_REQUEST,
       name: 'ValidationError',
-      description: 'The request payload contains invalid or missing fields.',
       data,
     })
   }

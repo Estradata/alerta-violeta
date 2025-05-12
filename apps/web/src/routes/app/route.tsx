@@ -1,4 +1,4 @@
-import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
+import { Link, Outlet, createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/app')({
   component: AppLayoutComponent,
@@ -16,9 +16,15 @@ export const Route = createFileRoute('/app')({
 
 function AppLayoutComponent() {
   return (
-    <div>
-      <h1>App Layout</h1>
-      <Outlet />
+    <div className='flex w-full h-full'>
+      <aside className='w-40 border-r flex flex-col gap-20'>
+        App Layout
+        <Link to='/app/safe-points'>Puntos Violetas</Link>
+      </aside>
+
+      <main className='flex-1  p-8'>
+        <Outlet />
+      </main>
     </div>
   )
 }

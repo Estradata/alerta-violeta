@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
 import { safePointSchema } from '@packages/safe-points/schema'
 import { db } from '@/lib/db'
-import { SafePoint } from '@packages/safe-points/types'
+import type { CreateSafePointResponse } from '@packages/safe-points/types'
 
 export const createSafePoint: RequestHandler = async (req, res, next) => {
   try {
@@ -13,8 +13,8 @@ export const createSafePoint: RequestHandler = async (req, res, next) => {
 
     res.json({
       message: 'Punto creado correctamente',
-      data: safePoint satisfies SafePoint,
-    })
+      data: safePoint,
+    } satisfies CreateSafePointResponse)
   } catch (err) {
     next(err)
   }

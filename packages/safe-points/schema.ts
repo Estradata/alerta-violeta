@@ -4,8 +4,8 @@ export const safePointSchema = z.object({
   accountId: z.string(),
   name: z.string(),
   address: z.string(),
-  lat: z.number(),
-  lng: z.number(),
+  lat: z.coerce.number(),
+  lng: z.coerce.number(),
   type: z.enum(['ONG', 'PUBLIC', 'PRIVATE']),
 })
 

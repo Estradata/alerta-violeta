@@ -1,7 +1,7 @@
 import { db } from '@/lib/db'
 import { RequestHandler } from 'express'
-import { SafePoint } from '@packages/safe-points/types'
 import { NotFoundError } from '@/lib/errors'
+import type { GetSafePointResponse } from '@packages/safe-points/types'
 
 export const getSafePoint: RequestHandler<{ userId: string }> = async (
   req,
@@ -17,7 +17,7 @@ export const getSafePoint: RequestHandler<{ userId: string }> = async (
 
     if (!data) throw new NotFoundError()
 
-    res.json({ data: data satisfies SafePoint })
+    res.json({ data } satisfies GetSafePointResponse)
   } catch (err) {
     next(err)
   }

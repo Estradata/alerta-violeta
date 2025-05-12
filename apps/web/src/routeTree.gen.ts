@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
 import { Route as AppRouteImport } from './routes/app/route'
 import { Route as IndexImport } from './routes/index'
+import { Route as AppSafePointsImport } from './routes/app/safe-points'
 import { Route as AppDashboardImport } from './routes/app/dashboard'
 
 // Create/Update Routes
@@ -34,6 +35,12 @@ const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
+} as any)
+
+const AppSafePointsRoute = AppSafePointsImport.update({
+  id: '/safe-points',
+  path: '/safe-points',
+  getParentRoute: () => AppRouteRoute,
 } as any)
 
 const AppDashboardRoute = AppDashboardImport.update({
@@ -74,6 +81,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardImport
       parentRoute: typeof AppRouteImport
     }
+    '/app/safe-points': {
+      id: '/app/safe-points'
+      path: '/safe-points'
+      fullPath: '/app/safe-points'
+      preLoaderRoute: typeof AppSafePointsImport
+      parentRoute: typeof AppRouteImport
+    }
   }
 }
 
@@ -81,10 +95,12 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteRouteChildren {
   AppDashboardRoute: typeof AppDashboardRoute
+  AppSafePointsRoute: typeof AppSafePointsRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppDashboardRoute: AppDashboardRoute,
+  AppSafePointsRoute: AppSafePointsRoute,
 }
 
 const AppRouteRouteWithChildren = AppRouteRoute._addFileChildren(
@@ -96,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/app/dashboard': typeof AppDashboardRoute
+  '/app/safe-points': typeof AppSafePointsRoute
 }
 
 export interface FileRoutesByTo {
@@ -103,6 +120,7 @@ export interface FileRoutesByTo {
   '/app': typeof AppRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/app/dashboard': typeof AppDashboardRoute
+  '/app/safe-points': typeof AppSafePointsRoute
 }
 
 export interface FileRoutesById {
@@ -111,14 +129,21 @@ export interface FileRoutesById {
   '/app': typeof AppRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/app/dashboard': typeof AppDashboardRoute
+  '/app/safe-points': typeof AppSafePointsRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/app' | '/login' | '/app/dashboard'
+  fullPaths: '/' | '/app' | '/login' | '/app/dashboard' | '/app/safe-points'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/app' | '/login' | '/app/dashboard'
-  id: '__root__' | '/' | '/app' | '/login' | '/app/dashboard'
+  to: '/' | '/app' | '/login' | '/app/dashboard' | '/app/safe-points'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/login'
+    | '/app/dashboard'
+    | '/app/safe-points'
   fileRoutesById: FileRoutesById
 }
 
@@ -155,7 +180,8 @@ export const routeTree = rootRoute
     "/app": {
       "filePath": "app/route.tsx",
       "children": [
-        "/app/dashboard"
+        "/app/dashboard",
+        "/app/safe-points"
       ]
     },
     "/login": {
@@ -163,6 +189,10 @@ export const routeTree = rootRoute
     },
     "/app/dashboard": {
       "filePath": "app/dashboard.tsx",
+      "parent": "/app"
+    },
+    "/app/safe-points": {
+      "filePath": "app/safe-points.tsx",
       "parent": "/app"
     }
   }

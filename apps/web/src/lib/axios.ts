@@ -1,6 +1,7 @@
-import a from 'axios'
+import a, { AxiosError } from 'axios'
 import { API_URL } from '@/config'
 import { getStoredToken } from '@/auth'
+import { toast } from 'sonner'
 
 // Set config defaults when creating the instance
 export const axios = a.create({
@@ -21,6 +22,24 @@ axios.interceptors.request.use(
     return config
   },
   (error) => {
+    return Promise.reject(error)
+  }
+)
+
+// Response interceptor for handling errors
+axios.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    if (error.response?.data) {
+      const data = error.response.data as {
+        description?: string
+      }
+
+      if (data.description) {
+        toast.error(data.description)
+      }
+    }
+
     return Promise.reject(error)
   }
 )

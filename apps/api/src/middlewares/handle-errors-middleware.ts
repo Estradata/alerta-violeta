@@ -11,14 +11,14 @@ type Handler = (error: Error) => AppError
 const ERRORS: Record<string, Handler> = {
   JsonWebTokenError: () => {
     return new AppError({
-      description: 'Invalid access token',
+      description: 'Token de acceso inválido',
       httpCode: HttpCode.UNAUTHORIZED,
     })
   },
 
   CastError: () => {
     return new AppError({
-      description: 'Bad request',
+      description: 'Solicitud incorrecta',
       httpCode: HttpCode.BAD_REQUEST,
     })
   },
@@ -31,7 +31,7 @@ const ERRORS: Record<string, Handler> = {
     console.log('Unhandled error: ', error.name, error.message)
 
     return new AppError({
-      description: 'An unknown error occurred',
+      description: 'Ocurrió un error inesperado, intente denuevo',
       httpCode: HttpCode.INTERNAL_SERVER_ERROR,
     })
   },

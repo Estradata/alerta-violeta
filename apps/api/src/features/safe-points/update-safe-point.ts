@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
 import { safePointSchema } from '@packages/safe-points/schema'
 import { db } from '@/lib/db'
-import { SafePoint } from '@packages/safe-points/types'
+import type { UpdateSafePointResponse } from '@packages/safe-points/types'
 
 export const updateSafePoint: RequestHandler<{ id: string }> = async (
   req,
@@ -18,8 +18,8 @@ export const updateSafePoint: RequestHandler<{ id: string }> = async (
 
     res.json({
       message: 'Punto actualizado correctamente',
-      data: safePoint satisfies SafePoint,
-    })
+      data: safePoint,
+    } satisfies UpdateSafePointResponse)
   } catch (err) {
     next(err)
   }
