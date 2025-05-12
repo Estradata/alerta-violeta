@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import type { SafePointData } from '@packages/safe-points/schema'
 import type { UseFormReturn } from 'react-hook-form'
-import { safePointTypes } from '../../../../../../packages/safe-points/consts'
+import { safePointTypes } from '@packages/safe-points/consts'
 import { SelectItem } from '@/components/ui/select'
 
 export function SafePointForm({

@@ -1,11 +1,11 @@
+import { useUiStore } from '@/features/emergency-contacts/store/ui'
+import { useDeleteEmergencyContacts } from '@/features/emergency-contacts/api/delete-emergency-contacts'
 import { ConfirmationDialog } from '@/components/confirmation-dialog'
-import { useDeleteSafePoints } from '@/features/safe-points/api/delete-safe-points'
-import { useUiStore } from '@/features/safe-points/store/ui'
 
-export function DeleteSafePoints() {
+export function DeleteEmergencyContacts() {
   const dialog = useUiStore((s) => s.deleteDialog)
   const closeDialog = useUiStore((s) => s.closeDeleteDialog)
-  const deleteMutation = useDeleteSafePoints({
+  const deleteMutation = useDeleteEmergencyContacts({
     onSuccess() {
       closeDialog()
     },
@@ -19,7 +19,9 @@ export function DeleteSafePoints() {
 
   return (
     <ConfirmationDialog
-      title={dialog.data?.length === 1 ? 'Eliminar punto' : 'Eliminar puntos'}
+      title={
+        dialog.data?.length === 1 ? 'Eliminar contacto' : 'Eliminar contactos'
+      }
       open={dialog.open}
       onOpenChange={closeDialog}
       onConfirm={() => onConfirm()}
@@ -27,7 +29,7 @@ export function DeleteSafePoints() {
       text={
         dialog.data?.length === 1 ? (
           <>
-            ¿Está seguro de que desea eliminar el punto
+            ¿Está seguro de que desea eliminar el contacto
             <br />
             <span className='text-foreground font-medium'>
               {dialog.data[0]?.name}
@@ -36,8 +38,8 @@ export function DeleteSafePoints() {
           </>
         ) : (
           <>
-            Se eliminarán {dialog.data?.length} puntos, este proceso no se puede
-            deshacer.
+            Se eliminarán {dialog.data?.length} contactos, este proceso no se
+            puede deshacer.
             <br />
             <div className='text-foreground font-medium py-3'>
               ¿Estás seguro?

@@ -1,15 +1,15 @@
 import { db } from '@/lib/db'
 import { RequestHandler } from 'express'
 import { NotFoundError } from '@/lib/errors'
-import type { GetSafePointResponse } from '@packages/safe-points/types'
+import type { GetEmergencyContactResponse } from '@packages/emergency-contacts/types'
 
-export const getSafePoint: RequestHandler<{ id: string }> = async (
+export const getEmergencyContact: RequestHandler<{ id: string }> = async (
   req,
   res,
   next
 ) => {
   try {
-    const data = await db.safePoint.findUnique({
+    const data = await db.emergencyContact.findUnique({
       where: {
         id: req.params.id,
       },
@@ -17,7 +17,7 @@ export const getSafePoint: RequestHandler<{ id: string }> = async (
 
     if (!data) throw new NotFoundError()
 
-    res.json({ data } satisfies GetSafePointResponse)
+    res.json({ data } satisfies GetEmergencyContactResponse)
   } catch (err) {
     next(err)
   }

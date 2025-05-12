@@ -1,5 +1,8 @@
 import { z } from 'zod'
 
+/**
+ * Create / Update Data
+ */
 export const safePointSchema = z.object({
   id: z.string().optional(),
   accountId: z.string(),

@@ -8,39 +8,37 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import {
-  safePointSchema,
-  type SafePointData,
-} from '@packages/safe-points/schema'
-import { SafePointForm } from '@/features/safe-points/components/safe-point-form'
-import { useUiStore } from '@/features/safe-points/store/ui'
+  emergencyContactSchema,
+  type EmergencyContactData,
+} from '@packages/emergency-contacts/schema'
+import { EmergencyContactForm } from '@/features/emergency-contacts/components/emergency-contact-form'
+import { useUiStore } from '@/features/emergency-contacts/store/ui'
 import { useAuth } from '@/auth'
-import { useUpdateSafePoint } from '@/features/safe-points/api/update-safe-point'
+import { useUpdateEmergencyContact } from '@/features/emergency-contacts/api/update-emergency-contact'
 
-export function UpdateSafePoint() {
+export function UpdateEmergencyContact() {
   const user = useAuth().user!
   const data = useUiStore((s) => s.updateDialog.data)
   const open = useUiStore((s) => s.updateDialog.open)
   const onClose = useUiStore((s) => s.closeUpdateDialog)
-  const form = useForm<SafePointData>({
-    resolver: zodResolver(safePointSchema),
+  const form = useForm<EmergencyContactData>({
+    resolver: zodResolver(emergencyContactSchema),
     values: {
       id: data?.id || '',
       accountId: user.accountId,
       name: data?.name || '',
-      address: data?.address || '',
-      lat: data?.lat || 0,
-      lng: data?.lng || 0,
-      type: (data?.type || 'ONG') as SafePointData['type'],
+      description: data?.description || '',
+      phone: data?.phone || '',
     },
   })
 
-  const updateMutation = useUpdateSafePoint({
+  const updateMutation = useUpdateEmergencyContact({
     onSuccess() {
       onClose()
     },
   })
 
-  function onSubmit(data: SafePointData) {
+  function onSubmit(data: EmergencyContactData) {
     updateMutation.mutate({
       ...data,
       accountId: user.accountId,
@@ -51,15 +49,15 @@ export function UpdateSafePoint() {
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Actualizar punto</DialogTitle>
+          <DialogTitle>Actualizar contacto</DialogTitle>
           <DialogDescription>
             Completa el formulario a continuación para actualizar un nuevo
-            punto. Proporciona toda la información requerida y asegúrate de que
-            los datos ingresados sean correctos.
+            contacto. Proporciona toda la información requerida y asegúrate de
+            que los datos ingresados sean correctos.
           </DialogDescription>
         </DialogHeader>
 
-        <SafePointForm
+        <EmergencyContactForm
           onSubmit={onSubmit}
           form={form}
           type='update'

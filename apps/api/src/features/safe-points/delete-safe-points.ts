@@ -3,7 +3,7 @@ import { db } from '@/lib/db'
 import { DeleteSafePointsResponse } from '@packages/safe-points/types'
 import { deleteSchema } from '@packages/misc/schema'
 
-export const deleteSafePoint: RequestHandler<{ id: string }> = async (
+export const deleteSafePoints: RequestHandler<{ id: string }> = async (
   req,
   res,
   next
@@ -20,7 +20,7 @@ export const deleteSafePoint: RequestHandler<{ id: string }> = async (
     })
 
     res.status(200).json({
-      message: 'Punto eliminado',
+      message: 'Punto(s) eliminado(s)',
     } satisfies DeleteSafePointsResponse)
   } catch (err) {
     next(err)

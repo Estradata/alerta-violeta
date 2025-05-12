@@ -5,7 +5,7 @@ import { handleSuccess, type MutationConfig } from '@/lib/react-query'
 import { axios } from '@/lib/axios'
 
 export function updateSafePoint(data: SafePointData) {
-  return axios.post<UpdateSafePointResponse>(`/safe-points/${data.id}`, data)
+  return axios.put<UpdateSafePointResponse>(`/safe-points/${data.id}`, data)
 }
 
 export function useUpdateSafePoint(
