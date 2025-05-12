@@ -1,5 +1,5 @@
 import { db } from '@/lib/db'
-import { UnauthorizedError } from '@/lib/errors'
+import { TokenError } from '@packages/errors'
 import { decodeToken } from '@/lib/jwt'
 import { LoginResponse } from '@packages/auth/types'
 import { RequestHandler } from 'express'
@@ -14,13 +14,13 @@ export const verifyUserToken: RequestHandler = async (req, res, next) => {
     }
 
     if (!token) {
-      throw new UnauthorizedError('Token missing or invalid')
+      throw new TokenError()
     }
 
     const decodedToken = decodeToken(token)
 
     if (!decodedToken || !decodedToken.id) {
-      throw new UnauthorizedError('Token missing or invalid')
+      throw new TokenError()
     }
 
     const user = await db.user.findUnique({
@@ -29,7 +29,7 @@ export const verifyUserToken: RequestHandler = async (req, res, next) => {
       },
     })
 
-    if (!user) throw new UnauthorizedError('Token missing or invalid')
+    if (!user) throw new TokenError()
 
     const { password, ...data } = user
 

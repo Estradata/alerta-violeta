@@ -33,6 +33,22 @@ function RouteComponent() {
       header: ({ column }) => (
         <TableColumnHeader column={column} title='Nombre' />
       ),
+      cell: ({ row }) => {
+        const safePoint = row.original
+
+        return (
+          <div className='flex items-center'>
+            <div>
+              <div className='text-sm font-medium text-gray-900 dark:text-white'>
+                {safePoint.name}
+              </div>
+              <div className='text-xs text-gray-500 dark:text-gray-400 max-w-xs truncate'>
+                {safePoint.address}
+              </div>
+            </div>
+          </div>
+        )
+      },
     },
     {
       id: 'actions',

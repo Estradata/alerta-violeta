@@ -3,7 +3,7 @@ import {
   HttpCode,
   NotFoundError,
   ValidationError,
-} from '@/lib/errors'
+} from '@packages/errors'
 import type { NextFunction, Response } from 'express'
 import { ZodError } from 'zod'
 

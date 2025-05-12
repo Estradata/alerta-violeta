@@ -1,6 +1,6 @@
 import { checkIsEmailAvailable } from '@/features/auth/utils'
 import { db } from '@/lib/db'
-import { ValidationError } from '@/lib/errors'
+import { ValidationError } from '@packages/errors'
 import { encodeUserToken } from '@/lib/jwt'
 import { hash } from '@/utils/hash'
 import { registrationSchema } from '@packages/auth/schema'

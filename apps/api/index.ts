@@ -1,9 +1,10 @@
+import SafePointsRouter from '@/features/safe-points/router'
+import handleErrors from '@/middlewares/handle-errors-middleware'
 import express from 'express'
+import EmergencyContactsRouter from '@/features/emergency-contacts/router'
 import cors from 'cors'
 import AuthRouter from '@/features/auth/router'
-import SafePointsRouter from '@/features/safe-points/router'
-import EmergencyContactsRouter from '@/features/emergency-contacts/router'
-import handleErrors from '@/middlewares/handle-errors-middleware'
+import { AuthUser } from '@packages/auth/types'
 
 const app = express()
 const API_VERSION = '/api'
@@ -12,7 +13,7 @@ const PORT = process.env.PORT || 3003
 declare global {
   namespace Express {
     interface Request {
-      userId: string
+      user: AuthUser
     }
   }
 }

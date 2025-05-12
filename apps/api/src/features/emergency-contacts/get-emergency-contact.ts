@@ -1,6 +1,6 @@
 import { db } from '@/lib/db'
 import { RequestHandler } from 'express'
-import { NotFoundError } from '@/lib/errors'
+import { NotFoundError } from '@packages/errors'
 import type { GetEmergencyContactResponse } from '@packages/emergency-contacts/types'
 
 export const getEmergencyContact: RequestHandler<{ id: string }> = async (

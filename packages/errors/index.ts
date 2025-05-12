@@ -47,6 +47,16 @@ export class UnauthorizedError extends AppError {
   }
 }
 
+export class TokenError extends AppError {
+  constructor() {
+    super({
+      name: 'TokenError',
+      description: 'Token de acceso inválido',
+      httpCode: HttpCode.UNAUTHORIZED,
+    })
+  }
+}
+
 export class NotFoundError extends AppError {
   constructor() {
     super({

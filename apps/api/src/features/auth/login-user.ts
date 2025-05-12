@@ -1,5 +1,5 @@
 import { db } from '@/lib/db'
-import { UnauthorizedError } from '@/lib/errors'
+import { UnauthorizedError } from '@packages/errors'
 import { encodeUserToken } from '@/lib/jwt'
 import { compare } from '@/utils/hash'
 import { loginSchema } from '@packages/auth/schema'
