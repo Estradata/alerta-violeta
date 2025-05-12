@@ -16,7 +16,7 @@ import {
 } from '@packages/safe-points/schema'
 import { useCreateSafePoint } from '@/features/safe-points/api/create-safe-point'
 import { SafePointForm } from '@/features/safe-points/components/safe-point-form'
-import { useGlobalStore } from '@/store/global-store'
+import { useAuth } from '@/auth'
 
 const defaultValues: SafePointData = {
   name: '',
@@ -28,7 +28,7 @@ const defaultValues: SafePointData = {
 }
 
 export function CreateSafePoint({ className }: { className?: string }) {
-  const user = useGlobalStore((s) => s.user!)
+  const user = useAuth().user!
   const { open, onOpenChange, onClose } = useDisclosure()
   const form = useForm<SafePointData>({
     resolver: zodResolver(safePointSchema),
@@ -52,7 +52,9 @@ export function CreateSafePoint({ className }: { className?: string }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button className={className}>Crear punto</Button>
+        <Button className={className} size='sm'>
+          Crear punto
+        </Button>
       </DialogTrigger>
 
       <DialogContent>

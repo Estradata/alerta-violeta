@@ -1,4 +1,3 @@
-
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -87,20 +86,21 @@ export function Table<TData, TValue>({
   const selectedItemsCount = table.getFilteredSelectedRowModel().rows.length
 
   return (
-    <div className='space-y-4'>
+    <div className='space-y-2'>
       <div className='flex flex-wrap justify-between'>
         <div className='flex gap-2'>
-          <TableToolbar
-            disabled={disabled}
-            searchColumn={searchColumn}
-            table={table}
-            filters={filters}
-          />
+          {(searchColumn || Boolean(filters.length)) && (
+            <TableToolbar
+              disabled={disabled}
+              searchColumn={searchColumn}
+              table={table}
+              filters={filters}
+            />
+          )}
 
           {onMultiDelete && selectedItemsCount > 0 && (
             <Button
               size='sm'
-              className='h-8'
               variant='outline'
               onClick={() => {
                 const rows = table

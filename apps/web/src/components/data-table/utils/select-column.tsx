@@ -11,7 +11,7 @@ export const selectColumn = <T,>(): ColumnDef<T> => ({
       }
       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
       aria-label='Seleccionar todo'
-      className='translate-y-[2px]'
+      className='translate-y-[2px] cursor-pointer'
     />
   ),
   cell: ({ row }) => (
@@ -19,7 +19,7 @@ export const selectColumn = <T,>(): ColumnDef<T> => ({
       checked={row.getIsSelected()}
       onCheckedChange={(value) => row.toggleSelected(!!value)}
       aria-label='Seleccionar fila'
-      className='translate-y-[2px]'
+      className='translate-y-[2px] cursor-pointer'
     />
   ),
   enableSorting: false,

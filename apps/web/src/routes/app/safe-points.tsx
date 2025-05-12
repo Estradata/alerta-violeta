@@ -1,3 +1,4 @@
+import { DashboardShell } from '@/components/dashboard-shell'
 import {
   Table,
   TableColumnHeader,
@@ -75,8 +76,10 @@ function RouteComponent() {
   ]
 
   return (
-    <div>
-      Hello "/app/safe-points"!
+    <DashboardShell
+      title='Puntos Violeta'
+      subtitle='Administra los puntos violeta'
+    >
       <Table
         columns={columns}
         data={safePoints}
@@ -87,6 +90,6 @@ function RouteComponent() {
         <UpdateSafePoint />
         <DeleteSafePoints />
       </Table>
-    </div>
+    </DashboardShell>
   )
 }

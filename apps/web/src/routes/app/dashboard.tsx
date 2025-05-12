@@ -1,5 +1,5 @@
 import { useAuth } from '@/auth'
-import { Button } from '@/components/ui/button'
+import { DashboardShell } from '@/components/dashboard-shell'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/app/dashboard')({
@@ -7,12 +7,12 @@ export const Route = createFileRoute('/app/dashboard')({
 })
 
 function RouteComponent() {
-  const auth = useAuth()
+  const user = useAuth().user!
 
   return (
-    <div>
-      Hello "/app/dashboard"!
-      <Button onClick={() => auth.logout()}>logout</Button>
-    </div>
+    <DashboardShell
+      title='Bienvenido'
+      subtitle={`${user.name}`}
+    ></DashboardShell>
   )
 }

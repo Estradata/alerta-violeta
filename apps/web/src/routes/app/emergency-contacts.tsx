@@ -1,3 +1,4 @@
+import { DashboardShell } from '@/components/dashboard-shell'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/app/emergency-contacts')({
@@ -5,5 +6,10 @@ export const Route = createFileRoute('/app/emergency-contacts')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/app/emergency-contacts"!</div>
+  return (
+    <DashboardShell
+      title='Directorio de Seguridad'
+      subtitle='Administra los contactos de emergencia'
+    ></DashboardShell>
+  )
 }

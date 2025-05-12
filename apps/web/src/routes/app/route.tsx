@@ -1,4 +1,7 @@
-import { Link, Outlet, createFileRoute, redirect } from '@tanstack/react-router'
+import { useAuth } from '@/auth'
+import { AppSidebar } from '@/components/app-sidebar'
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/app')({
   component: AppLayoutComponent,
@@ -15,20 +18,20 @@ export const Route = createFileRoute('/app')({
 })
 
 function AppLayoutComponent() {
+  const auth = useAuth()
+
   return (
-    <div className='flex w-full h-full'>
-      <aside className='w-40 border-r flex flex-col gap-20'>
-        App Layout
-        <Link to='/app/monitoring'>Monitoreo</Link>
-        <Link to='/app/safe-points'>Puntos Violetas</Link>
-        <Link to='/app/users'>Usuarios</Link>
-        <Link to='/app/alerts'>Alertas</Link>
-        <Link to='/app/emergency-contacts'>Directorio de Seguridad</Link>
-      </aside>
-      
-      <main className='flex-1'>
-        <Outlet />
-      </main>
-    </div>
+    <SidebarProvider className='h-full'>
+      <AppSidebar user={auth.user!} />
+
+      <SidebarInset className='overflow-hidden'>
+        <main
+          className='h-full w-full'
+          // className='py-12 px-4 sm:px-6 lg:px-8 h-full'
+        >
+          <Outlet />
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }

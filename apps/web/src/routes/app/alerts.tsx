@@ -1,3 +1,4 @@
+import { DashboardShell } from '@/components/dashboard-shell'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/app/alerts')({
@@ -5,5 +6,10 @@ export const Route = createFileRoute('/app/alerts')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/app/alerts"!</div>
+  return (
+    <DashboardShell
+      title='Alertas'
+      subtitle='Consulta el historial de alertas registradas'
+    ></DashboardShell>
+  )
 }

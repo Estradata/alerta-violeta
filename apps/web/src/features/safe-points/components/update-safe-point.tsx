@@ -13,11 +13,11 @@ import {
 } from '@packages/safe-points/schema'
 import { useCreateSafePoint } from '@/features/safe-points/api/create-safe-point'
 import { SafePointForm } from '@/features/safe-points/components/safe-point-form'
-import { useGlobalStore } from '@/store/global-store'
 import { useUiStore } from '@/features/safe-points/store/ui'
+import { useAuth } from '@/auth'
 
 export function UpdateSafePoint() {
-  const user = useGlobalStore((s) => s.user!)
+  const user = useAuth().user!;
   const data = useUiStore((s) => s.updateDialog.data)
   const open = useUiStore((s) => s.updateDialog.open)
   const onClose = useUiStore((s) => s.closeUpdateDialog)

@@ -25,7 +25,12 @@ function RouteComponent() {
 
   return (
     <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
-      <Map defaultCenter={defaultCenter} defaultZoom={10} mapId='DEMO_MAP_ID'>
+      <Map
+        defaultCenter={defaultCenter}
+        defaultZoom={10}
+        mapId='DEMO_MAP_ID'
+        disableDefaultUI={true}
+      >
         {randomPoints.map((position, i) => {
           return <AlertMapMarker position={position} key={i} />
         })}
