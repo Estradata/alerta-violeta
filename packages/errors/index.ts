@@ -37,6 +37,15 @@ export class AppError extends Error {
   }
 }
 
+export class CredentialsError extends AppError {
+  constructor() {
+    super({
+      httpCode: HttpCode.UNAUTHORIZED,
+      name: 'CredentialsError',
+    })
+  }
+}
+
 export class UnauthorizedError extends AppError {
   constructor(description?: string) {
     super({

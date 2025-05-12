@@ -1,5 +1,5 @@
 import { db } from '@/lib/db'
-import { UnauthorizedError } from '@packages/errors'
+import { CredentialsError } from '@packages/errors'
 import { encodeUserToken } from '@/lib/jwt'
 import { compare } from '@/utils/hash'
 import { loginSchema } from '@packages/auth/schema'
@@ -14,10 +14,10 @@ export const loginUser: RequestHandler = async (req, res, next) => {
      * Check credentials
      */
     const user = await db.user.findUnique({ where: { email: data.email } })
-    if (!user) throw new UnauthorizedError('Invalid credentials')
+    if (!user) throw new CredentialsError()
 
     const passwordCorrect = await compare(data.password, user.password)
-    if (!passwordCorrect) throw new UnauthorizedError('Invalid credentials')
+    if (!passwordCorrect) throw new CredentialsError()
 
     /**
      * Sign token
