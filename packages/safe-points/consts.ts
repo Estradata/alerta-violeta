@@ -1,5 +1,4 @@
-import { SafePoint } from './types'
-import { SafePointData } from './schema'
+import type { SafePointData } from './schema'
 
 export const SAFE_POINT_TYPE_LABEL: Record<SafePointData['type'], string> = {
   ONG: 'ONG',
