@@ -79,11 +79,6 @@ const items: Item[] = [
     url: '/app/users',
     icon: UsersIcon,
   },
-  {
-    title: 'Administradores',
-    url: '/app/admins',
-    icon: UsersIcon,
-  },
 ]
 
 export function AppSidebar({ user }: { user: AuthUser }) {

@@ -20,7 +20,6 @@ import { Route as AppMonitoringImport } from './routes/app/monitoring'
 import { Route as AppEmergencyContactsImport } from './routes/app/emergency-contacts'
 import { Route as AppDashboardImport } from './routes/app/dashboard'
 import { Route as AppAlertsImport } from './routes/app/alerts'
-import { Route as AppAdminsImport } from './routes/app/admins'
 
 // Create/Update Routes
 
@@ -78,12 +77,6 @@ const AppAlertsRoute = AppAlertsImport.update({
   getParentRoute: () => AppRouteRoute,
 } as any)
 
-const AppAdminsRoute = AppAdminsImport.update({
-  id: '/admins',
-  path: '/admins',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -108,13 +101,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
-    }
-    '/app/admins': {
-      id: '/app/admins'
-      path: '/admins'
-      fullPath: '/app/admins'
-      preLoaderRoute: typeof AppAdminsImport
-      parentRoute: typeof AppRouteImport
     }
     '/app/alerts': {
       id: '/app/alerts'
@@ -164,7 +150,6 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AppRouteRouteChildren {
-  AppAdminsRoute: typeof AppAdminsRoute
   AppAlertsRoute: typeof AppAlertsRoute
   AppDashboardRoute: typeof AppDashboardRoute
   AppEmergencyContactsRoute: typeof AppEmergencyContactsRoute
@@ -174,7 +159,6 @@ interface AppRouteRouteChildren {
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
-  AppAdminsRoute: AppAdminsRoute,
   AppAlertsRoute: AppAlertsRoute,
   AppDashboardRoute: AppDashboardRoute,
   AppEmergencyContactsRoute: AppEmergencyContactsRoute,
@@ -191,7 +175,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/login': typeof LoginRoute
-  '/app/admins': typeof AppAdminsRoute
   '/app/alerts': typeof AppAlertsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/emergency-contacts': typeof AppEmergencyContactsRoute
@@ -204,7 +187,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/login': typeof LoginRoute
-  '/app/admins': typeof AppAdminsRoute
   '/app/alerts': typeof AppAlertsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/emergency-contacts': typeof AppEmergencyContactsRoute
@@ -218,7 +200,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/app': typeof AppRouteRouteWithChildren
   '/login': typeof LoginRoute
-  '/app/admins': typeof AppAdminsRoute
   '/app/alerts': typeof AppAlertsRoute
   '/app/dashboard': typeof AppDashboardRoute
   '/app/emergency-contacts': typeof AppEmergencyContactsRoute
@@ -233,7 +214,6 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/login'
-    | '/app/admins'
     | '/app/alerts'
     | '/app/dashboard'
     | '/app/emergency-contacts'
@@ -245,7 +225,6 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/login'
-    | '/app/admins'
     | '/app/alerts'
     | '/app/dashboard'
     | '/app/emergency-contacts'
@@ -257,7 +236,6 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/login'
-    | '/app/admins'
     | '/app/alerts'
     | '/app/dashboard'
     | '/app/emergency-contacts'
@@ -300,7 +278,6 @@ export const routeTree = rootRoute
     "/app": {
       "filePath": "app/route.tsx",
       "children": [
-        "/app/admins",
         "/app/alerts",
         "/app/dashboard",
         "/app/emergency-contacts",
@@ -311,10 +288,6 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.tsx"
-    },
-    "/app/admins": {
-      "filePath": "app/admins.tsx",
-      "parent": "/app"
     },
     "/app/alerts": {
       "filePath": "app/alerts.tsx",
