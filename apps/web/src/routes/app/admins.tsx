@@ -1,3 +1,4 @@
+import { DashboardShell } from '@/components/dashboard-shell'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/app/admins')({
@@ -5,5 +6,10 @@ export const Route = createFileRoute('/app/admins')({
 })
 
 function RouteComponent() {
-  return <div>Hello "/app/admins"!</div>
+  return (
+    <DashboardShell
+      title='Administradores'
+      subtitle='Gestiona los administradores del panel web'
+    ></DashboardShell>
+  )
 }

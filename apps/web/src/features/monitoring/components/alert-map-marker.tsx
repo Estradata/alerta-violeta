@@ -10,9 +10,9 @@ export function AlertMapMarker({
     <AdvancedMarker position={position}>
       <div className='relative flex justify-center items-center circles'>
         {/* Ripple Animation */}
-        <span className='circle1'></span>
-        <span className='circle2'></span>
-        <span className='circle3'></span>
+        <span className='circle-1'></span>
+        <span className='circle-2'></span>
+        <span className='circle-3'></span>
 
         <CustomMapPin />
       </div>

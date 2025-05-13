@@ -136,15 +136,15 @@ body,
   animation: growAndFade 1.3s infinite ease-out;
 }
 
-.circles .circle1 {
+.circles .circle-1 {
   animation-delay: 0.3s;
 }
 
-.circles .circle2 {
+.circles .circle-2 {
   animation-delay: 0.6s;
 }
 
-.circles .circle3 {
+.circles .circle-3 {
   animation-delay: 0.9s;
 }
 

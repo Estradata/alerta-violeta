@@ -1,9 +1,9 @@
 import type { SVGProps } from 'react'
 
 export function CustomMapPin(props: SVGProps<SVGSVGElement>) {
-  const BORDER_COLOR = '#581c87'
-  const CIRCLE_COLOR = '#6b21a8'
-  const PIN_COLOR = '#a855f7'
+  const BORDER_COLOR = '#581c87' // purple-900
+  const CIRCLE_COLOR = '#6b21a8' // purple-800
+  const PIN_COLOR = '#a855f7' // purple-500
 
   return (
     <svg

@@ -1,111 +1,62 @@
-import { DashboardShell } from '@/components/dashboard-shell'
-import {
-  Table,
-  TableColumnHeader,
-  TableRowActions,
-} from '@/components/data-table'
-import { selectColumn } from '@/components/data-table/utils/select-column'
-import { useSafePoints } from '@/features/safe-points/api/get-safe-points'
-import { CreateSafePoint } from '@/features/safe-points/components/create-safe-point'
-import { DeleteSafePoints } from '@/features/safe-points/components/delete-safe-points'
-import { UpdateSafePoint } from '@/features/safe-points/components/update-safe-point'
-import { useUiStore } from '@/features/safe-points/store/ui'
+import { GOOGLE_MAPS_API_KEY } from '@/config'
+import { AlertMapMarker } from '@/features/monitoring/components/alert-map-marker'
 import { createFileRoute } from '@tanstack/react-router'
-import type { ColumnDef } from '@tanstack/react-table'
-import { EditIcon, TrashIcon } from 'lucide-react'
+import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps'
+import { ShieldIcon } from 'lucide-react'
 
 export const Route = createFileRoute('/app/safe-points')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const result = useSafePoints()
-  const safePoints = result.data?.data || []
-  const openUpdateDialog = useUiStore((s) => s.openUpdateDialog)
-  const openDeleteDialog = useUiStore((s) => s.openDeleteDialog)
+  const defaultCenter = { lat: 20.66682, lng: -103.39182 }
 
-  if (result.isLoading) return <p>Loading...</p>
+  const alerts = [
+    { lat: 20.6845, lng: -103.3497 },
+    { lat: 20.6712, lng: -103.4079 },
+    { lat: 20.7158, lng: -103.3661 },
+    { lat: 20.6501, lng: -103.2953 },
+    { lat: 20.7356, lng: -103.4164 },
+  ]
 
-  const columns: ColumnDef<(typeof safePoints)[number]>[] = [
-    selectColumn(),
-    {
-      accessorKey: 'name',
-      header: ({ column }) => (
-        <TableColumnHeader column={column} title='Nombre' />
-      ),
-      cell: ({ row }) => {
-        const safePoint = row.original
-
-        return (
-          <div className='flex items-center'>
-            <div>
-              <div className='text-sm font-medium text-gray-900 dark:text-white'>
-                {safePoint.name}
-              </div>
-              <div className='text-xs text-gray-500 dark:text-gray-400 max-w-xs truncate'>
-                {safePoint.address}
-              </div>
-            </div>
-          </div>
-        )
-      },
-    },
-    {
-      id: 'actions',
-      header: ({ column }) => (
-        <TableColumnHeader column={column} title='Opciones' />
-      ),
-      cell: ({ row }) => {
-        return (
-          <TableRowActions
-            actions={[
-              {
-                asChild: true,
-                render: (
-                  <button
-                    className='flex justify-start gap-2 items-center cursor-pointer w-full'
-                    onClick={() => openUpdateDialog(row.original)}
-                  >
-                    <EditIcon />
-                    <span>Actualizar</span>
-                  </button>
-                ),
-              },
-              {
-                asChild: true,
-                render: (
-                  <button
-                    className='flex justify-start gap-2 items-center cursor-pointer w-full'
-                    onClick={() => openDeleteDialog([row.original])}
-                  >
-                    <TrashIcon />
-
-                    <span>Eliminar</span>
-                  </button>
-                ),
-              },
-            ]}
-          />
-        )
-      },
-    },
+  const points = [
+    { lat: 20.6845, lng: -103.3495 },
+    { lat: 20.6879, lng: -103.432 },
+    { lat: 20.6383, lng: -103.3967 },
+    { lat: 20.725, lng: -103.2902 },
+    { lat: 20.6789, lng: -103.3731 },
   ]
 
   return (
-    <DashboardShell
-      title='Puntos Violeta'
-      subtitle='Administra los puntos violeta'
-    >
-      <Table
-        columns={columns}
-        data={safePoints}
-        onMultiDelete={openDeleteDialog}
-        rowsPerPageLabel='Puntos por página'
+    <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+      <Map
+        defaultCenter={defaultCenter}
+        defaultZoom={10}
+        mapId='DEMO_MAP_ID'
+        disableDefaultUI={true}
       >
-        <CreateSafePoint />
-        <UpdateSafePoint />
-        <DeleteSafePoints />
-      </Table>
-    </DashboardShell>
+        {alerts.map((position, i) => {
+          return <AlertMapMarker position={position} key={i} />
+        })}
+
+        {points.map((position, i) => {
+          return <SafePointMapMarker position={position} key={i} />
+        })}
+      </Map>
+    </APIProvider>
+  )
+}
+
+function SafePointMapMarker({
+  position,
+}: {
+  position: { lat: number; lng: number }
+}) {
+  return (
+    <AdvancedMarker position={position}>
+      <div>
+        <ShieldIcon className='h-10 w-auto stroke-purple-900 fill-purple-400 stroke-[1.2]' />
+      </div>
+    </AdvancedMarker>
   )
 }
