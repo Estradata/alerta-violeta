@@ -4,6 +4,7 @@ import express from 'express'
 import EmergencyContactsRouter from '@/features/emergency-contacts/router'
 import cors from 'cors'
 import AuthRouter from '@/features/auth/router'
+import AlertsRouter from '@/features/alerts/router'
 import { AuthUser } from '@packages/auth/types'
 
 const app = express()
@@ -25,6 +26,7 @@ function main() {
   app.use(`${API_VERSION}/auth`, AuthRouter)
   app.use(`${API_VERSION}/safe-points`, SafePointsRouter)
   app.use(`${API_VERSION}/emergency-contacts`, EmergencyContactsRouter)
+  app.use(`${API_VERSION}/alerts`, AlertsRouter)
 
   // @ts-ignore
   app.use(handleErrors)

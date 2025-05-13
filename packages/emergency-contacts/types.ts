@@ -1,3 +1,4 @@
+import type { DataMsgResponse, DataResponse, MsgResponse } from '../misc/types'
 /**
  * Model
  */
@@ -11,24 +12,8 @@ export type EmergencyContact = {
 /**
  * API Responses
  */
-export type GetEmergencyContactResponse = {
-  data: EmergencyContact
-}
-
-export type GetEmergencyContactsResponse = {
-  data: EmergencyContact[]
-}
-
-export type CreateEmergencyContactResponse = {
-  message: string
-  data: EmergencyContact
-}
-
-export type UpdateEmergencyContactResponse = {
-  message: string
-  data: EmergencyContact
-}
-
-export type DeleteEmergencyContactsResponse = {
-  message: string
-}
+export type GetEmergencyContactResponse = DataResponse<EmergencyContact>
+export type GetEmergencyContactsResponse = DataResponse<EmergencyContact[]>
+export type CreateEmergencyContactResponse = DataMsgResponse<EmergencyContact>
+export type UpdateEmergencyContactResponse = DataMsgResponse<EmergencyContact>
+export type DeleteEmergencyContactsResponse = MsgResponse

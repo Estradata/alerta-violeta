@@ -1,3 +1,5 @@
+import type { DataMsgResponse } from '@packages/misc/types'
+
 export type AuthUser = {
   id: string
   email: string
@@ -8,10 +10,7 @@ export type AuthUser = {
   role: 'ADMIN' | 'MEMBER'
 }
 
-export type LoginResponse = {
-  message: string
-  data: {
-    user: AuthUser
-    token: string
-  }
-}
+export type LoginResponse = DataMsgResponse<{
+  user: AuthUser
+  token: string
+}>
