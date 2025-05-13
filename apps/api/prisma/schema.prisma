@@ -82,6 +82,7 @@ model EmergencyContact {
   @@map("emergency_contacts")
 }
 
+// Web Panel Users
 model Admin {
   id String @id @default(uuid())
 
