@@ -12,18 +12,16 @@ model Account {
   id   String @id @default(uuid())
   name String
 
-  users            User[]
-  safePoints       SafePoint[]
+  users  User[]
+  admins Admin[]
+
+  safePoints        SafePoint[]
   emergencyContacts EmergencyContact[]
 
   @@map("accounts")
 }
 
-enum UserRoles {
-  ADMIN
-  MEMBER
-}
-
+// Mobile App Users
 enum UserStatus {
   ACTIVE
   BLOCKED
@@ -38,7 +36,6 @@ model User {
   name     String
   password String
 
-  role   UserRoles  @default(MEMBER)
   status UserStatus @default(ACTIVE)
   alerts Alert[]
 
@@ -83,4 +80,24 @@ model EmergencyContact {
   description String
 
   @@map("emergency_contacts")
+}
+
+model Admin {
+  id String @id @default(uuid())
+
+  account   Account @relation(fields: [accountId], references: [id])
+  accountId String  @map("account_id")
+
+  email    String @unique
+  password String
+
+  @@map("admins")
+}
+
+model ActivityLog {
+  id          String   @id @default(uuid())
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("activity_logs")
 }
