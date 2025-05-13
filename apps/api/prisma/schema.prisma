@@ -39,6 +39,8 @@ model User {
   status UserStatus @default(ACTIVE)
   alerts Alert[]
 
+  createdAt DateTime @default(now()) @map("created_at")
+
   @@map("users")
 }
 
@@ -84,21 +86,42 @@ model EmergencyContact {
 
 // Web Panel Users
 model Admin {
-  id String @id @default(uuid())
-
+  id        String  @id @default(uuid())
   account   Account @relation(fields: [accountId], references: [id])
   accountId String  @map("account_id")
 
   email    String @unique
   password String
 
+  // A defined role, with pre-defined permissions
+  role              AdminRole?   @relation(fields: [roleId], references: [id])
+  roleId            String?
+  // OR a list of custom permissions
+  customPermissions Permission[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
   @@map("admins")
 }
 
-model ActivityLog {
-  id          String   @id @default(uuid())
-  description String?
-  createdAt   DateTime @default(now()) @map("created_at")
+model AdminRole {
+  id   String @id @default(uuid())
+  name String @unique
 
-  @@map("activity_logs")
+  permissions Permission[]
+  users       Admin[]
+
+  @@map("admin_roles")
+}
+
+model Permission {
+  id     String @id @default(uuid())
+  module String
+  action String
+
+  roles AdminRole[]
+  users Admin[]
+
+  @@unique([module, action])
+  @@map("permissions")
 }

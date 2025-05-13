@@ -1,9 +1,9 @@
 import { TokenError } from '@packages/errors'
-import { decodeUserToken } from '@/lib/jwt'
+import { decodeAdminToken } from '@/lib/jwt'
 import { NextFunction, Request, Response } from 'express'
 import { db } from '@/lib/db'
 
-export default async function userExtractor(
+export default async function adminExtractor(
   req: Request,
   _: Response,
   next: NextFunction
@@ -17,22 +17,24 @@ export default async function userExtractor(
       token = authorization.substring(7)
     }
 
-    const decodedToken = decodeUserToken(token)
+    const decodedToken = decodeAdminToken(token)
+
+    console.log(decodedToken)
 
     if (!token || !decodedToken.id) {
       throw new TokenError()
     }
 
-    const user = await db.user.findUnique({ where: { id: decodedToken.id } })
+    const admin = await db.admin.findUnique({ where: { id: decodedToken.id } })
 
-    if (!user) throw new TokenError()
+    console.log(admin)
 
-    req.user = {
-      accountId: user.accountId,
-      email: user.email,
-      id: user.id,
-      name: user.name,
-      status: user.status,
+    if (!admin) throw new TokenError()
+
+    req.admin = {
+      accountId: admin.accountId,
+      email: admin.email,
+      id: admin.id,
     }
 
     next()

@@ -1,14 +1,12 @@
 import type { DataMsgResponse } from '../misc/types'
 
-export type AuthUser = {
+export type AuthAdminUser = {
   id: string
   email: string
   accountId: string
-  name: string
-  status: 'BLOCKED' | 'ACTIVE'
 }
 
 export type LoginResponse = DataMsgResponse<{
-  user: AuthUser
+  user: AuthAdminUser
   token: string
 }>

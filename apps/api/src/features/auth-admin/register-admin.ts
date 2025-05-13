@@ -1,20 +1,20 @@
-import { checkIsUserEmailAvailable } from '@/features/auth/utils'
 import { db } from '@/lib/db'
 import { ValidationError } from '@packages/errors'
 import { encodeUserToken } from '@/lib/jwt'
 import { hash } from '@/utils/hash'
-import { registrationSchema } from '@packages/auth/schema'
-import { LoginResponse } from '@packages/auth/types'
+import { registrationSchema } from '@packages/auth-admin/schema'
+import { LoginResponse } from '@packages/auth-admin/types'
 import { RequestHandler } from 'express'
+import { checkIsAdminEmailAvailable } from '@/features/auth-admin/utils'
 
-export const registerUser: RequestHandler = async (req, res, next) => {
+export const registerAdmin: RequestHandler = async (req, res, next) => {
   try {
     const data = registrationSchema.parse(req.body)
 
     /**
      * Check email available
      */
-    const available = await checkIsUserEmailAvailable(data.email)
+    const available = await checkIsAdminEmailAvailable(data.email)
     if (!available)
       throw new ValidationError({
         email: 'Este correo no está disponible',
@@ -36,7 +36,7 @@ export const registerUser: RequestHandler = async (req, res, next) => {
      * Create user
      */
     const hashedPassword = await hash(data.password)
-    const { password, ...user } = await db.user.create({
+    const { password, ...admin } = await db.admin.create({
       data: {
         ...data,
         password: hashedPassword,
@@ -44,8 +44,8 @@ export const registerUser: RequestHandler = async (req, res, next) => {
     })
 
     const userForToken = {
-      id: user.id,
-      email: user.email,
+      id: admin.id,
+      email: admin.email,
     }
 
     const token = encodeUserToken(userForToken)
@@ -53,7 +53,7 @@ export const registerUser: RequestHandler = async (req, res, next) => {
     res.json({
       message: 'User registration successful',
       data: {
-        user,
+        user: admin,
         token,
       },
     } satisfies LoginResponse)

@@ -1,10 +1,10 @@
 import { db } from '@/lib/db'
 import { TokenError } from '@packages/errors'
-import { decodeUserToken } from '@/lib/jwt'
-import { LoginResponse } from '@packages/auth/types'
+import { decodeAdminToken } from '@/lib/jwt'
+import { LoginResponse } from '@packages/auth-admin/types'
 import { RequestHandler } from 'express'
 
-export const verifyUserToken: RequestHandler = async (req, res, next) => {
+export const verifyAdminToken: RequestHandler = async (req, res, next) => {
   try {
     const authorization = req.get('authorization')
     let token: string = ''
@@ -17,21 +17,21 @@ export const verifyUserToken: RequestHandler = async (req, res, next) => {
       throw new TokenError()
     }
 
-    const decodedToken = decodeUserToken(token)
+    const decodedToken = decodeAdminToken(token)
 
     if (!decodedToken || !decodedToken.id) {
       throw new TokenError()
     }
 
-    const user = await db.user.findUnique({
+    const admin = await db.admin.findUnique({
       where: {
         id: decodedToken.id,
       },
     })
 
-    if (!user) throw new TokenError()
+    if (!admin) throw new TokenError()
 
-    const { password, ...data } = user
+    const { password, ...data } = admin
 
     res.status(202).json({
       message: 'Login successful',

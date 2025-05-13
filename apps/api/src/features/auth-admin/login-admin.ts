@@ -1,34 +1,34 @@
 import { db } from '@/lib/db'
 import { CredentialsError } from '@packages/errors'
-import { encodeUserToken } from '@/lib/jwt'
+import { encodeAdminToken } from '@/lib/jwt'
 import { compare } from '@/utils/hash'
-import { loginSchema } from '@packages/auth/schema'
-import { LoginResponse } from '@packages/auth/types'
+import { loginSchema } from '@packages/auth-admin/schema'
+import { LoginResponse } from '@packages/auth-admin/types'
 import { RequestHandler } from 'express'
 
-export const loginUser: RequestHandler = async (req, res, next) => {
+export const loginAdmin: RequestHandler = async (req, res, next) => {
   try {
     const data = loginSchema.parse(req.body)
 
     /**
      * Check credentials
      */
-    const user = await db.user.findUnique({ where: { email: data.email } })
-    if (!user) throw new CredentialsError()
+    const admin = await db.admin.findUnique({ where: { email: data.email } })
+    if (!admin) throw new CredentialsError()
 
-    const passwordCorrect = await compare(data.password, user.password)
+    const passwordCorrect = await compare(data.password, admin.password)
     if (!passwordCorrect) throw new CredentialsError()
 
     /**
      * Sign token
      */
-    const { password, ...userWithoutPassword } = user
+    const { password, ...userWithoutPassword } = admin
     const userForToken = {
       id: userWithoutPassword.id,
       email: userWithoutPassword.email,
     }
 
-    const token = encodeUserToken(userForToken)
+    const token = encodeAdminToken(userForToken)
 
     res.status(201).json({
       message: 'Login successful',
