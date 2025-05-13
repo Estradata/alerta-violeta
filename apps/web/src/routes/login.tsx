@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { siteConfig } from '@/config'
 import { LoginForm } from '@/features/auth/components/login-form'
 
-const fallback = '/app/dashboard' as const
+const fallback = '/app/admins' as const
 
 export const Route = createFileRoute('/login')({
   validateSearch: z.object({

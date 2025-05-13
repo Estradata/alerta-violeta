@@ -4,12 +4,11 @@ import * as React from 'react'
 import {
   type LucideProps,
   ChevronRight,
-  LayoutDashboardIcon,
   ActivityIcon,
-  BellIcon,
   ShieldIcon,
   MapPinIcon,
   UsersIcon,
+  XIcon,
 } from 'lucide-react'
 
 import { NavUser } from '@/components/nav-user'
@@ -50,29 +49,9 @@ type Item = {
 
 const items: Item[] = [
   {
-    title: 'Dashboard',
-    url: '/app/dashboard',
-    icon: LayoutDashboardIcon,
-  },
-  {
-    title: 'Monitoreo',
-    url: '/app/monitoring',
-    icon: ActivityIcon,
-  },
-  {
-    title: 'Alertas',
-    url: '/app/alerts',
-    icon: BellIcon,
-  },
-  {
-    title: 'Directorio de Seguridad',
-    url: '/app/emergency-contacts',
-    icon: ShieldIcon,
-  },
-  {
-    title: 'Puntos Violeta',
-    url: '/app/safe-points',
-    icon: MapPinIcon,
+    title: 'Administradores',
+    url: '/app/admins',
+    icon: UsersIcon,
   },
   {
     title: 'Usuarios',
@@ -80,9 +59,24 @@ const items: Item[] = [
     icon: UsersIcon,
   },
   {
-    title: 'Administradores',
-    url: '/app/admins',
-    icon: UsersIcon,
+    title: 'Puntos Violeta',
+    url: '/app/safe-points',
+    icon: MapPinIcon,
+  },
+  {
+    title: '',
+    url: '/app/safe-points',
+    icon: XIcon,
+  },
+  {
+    title: 'Monitoreo',
+    url: '/app/monitoring',
+    icon: ActivityIcon,
+  },
+  {
+    title: 'Directorio de Seguridad',
+    url: '/app/emergency-contacts',
+    icon: ShieldIcon,
   },
 ]
 
