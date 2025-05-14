@@ -77,7 +77,7 @@ function Content() {
 
   return (
     <div
-      className='flex flex-col h-full bg-red-400'
+      className='flex flex-col h-full'
       onClick={(e) => {
         if (!autocomplete.open) return
 
@@ -86,13 +86,13 @@ function Content() {
       }}
     >
       {/* Barra superior con búsqueda y botón de menú */}
-      <div className='absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-4 bg-sidebar'>
+      <div className='absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-4 bg-sidebar gap-4'>
         <AutocompleteControl
           onPlaceSelect={setSelectedPlace}
           {...autocomplete}
         />
 
-        <div className='flex items-center gap-2'>
+        <div className='flex items-center gap-1 md:gap-2'>
           {markerMode ? (
             <>
               <Button size='icon' variant='outline' onClick={clearMarker}>
