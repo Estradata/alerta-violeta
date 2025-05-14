@@ -17,6 +17,7 @@ import {
 import { useCreateSafePoint } from '@/features/safe-points/api/create-safe-point'
 import { SafePointForm } from '@/features/safe-points/components/safe-point-form'
 import { useAuth } from '@/auth'
+import { PlusIcon } from 'lucide-react'
 
 const defaultValues: SafePointData = {
   name: '',
@@ -27,22 +28,41 @@ const defaultValues: SafePointData = {
   type: 'ONG',
 }
 
-export function CreateSafePoint({ className }: { className?: string }) {
+export function CreateSafePoint({
+  disabled,
+  data,
+  clearMarker,
+}: {
+  disabled?: boolean
+  clearMarker?: () => void
+  data: {
+    address?: string
+    lat: number
+    lng: number
+  }
+}) {
   const user = useAuth().user!
   const { open, onOpenChange, onClose } = useDisclosure()
   const form = useForm<SafePointData>({
     resolver: zodResolver(safePointSchema),
-    defaultValues,
+    values: {
+      ...defaultValues,
+      address: data?.address || '',
+      lat: data?.lat || 0,
+      lng: data?.lng || 0,
+    },
   })
 
   const createMutation = useCreateSafePoint({
     onSuccess() {
       onClose()
       form.reset(defaultValues)
+      clearMarker?.()
     },
   })
 
   function onSubmit(data: SafePointData) {
+    console.log(data)
     createMutation.mutate({
       ...data,
       accountId: user.accountId,
@@ -52,8 +72,9 @@ export function CreateSafePoint({ className }: { className?: string }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button className={className} size='sm'>
-          Crear punto
+        <Button size='icon' disabled={disabled}>
+          <PlusIcon className='h-4 w-4' />
+          <span className='sr-only'>Añadir punto</span>
         </Button>
       </DialogTrigger>
 

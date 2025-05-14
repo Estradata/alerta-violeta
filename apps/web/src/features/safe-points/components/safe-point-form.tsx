@@ -12,11 +12,13 @@ export function SafePointForm({
   form,
   onSubmit,
   isLoading,
+  disabled,
 }: {
   form: UseFormReturn<SafePointData>
   onSubmit: (data: SafePointData) => void
   isLoading: boolean
   type: 'create' | 'update'
+  disabled?: boolean
 }) {
   return (
     <Form {...form}>
@@ -24,28 +26,8 @@ export function SafePointForm({
         <ControlledInput
           control={form.control}
           name='name'
-          label='Nombre del punto'
-          required
-        />
-
-        <ControlledInput
-          control={form.control}
-          name='address'
-          label='Dirección'
-          required
-        />
-
-        <ControlledInput
-          control={form.control}
-          name='lat'
-          label='Latitud'
-          required
-        />
-
-        <ControlledInput
-          control={form.control}
-          name='lng'
-          label='Lng'
+          label='Nombre'
+          placeholder='Nombre del punto'
           required
         />
 
@@ -64,7 +46,12 @@ export function SafePointForm({
           })}
         </ControlledSelect>
 
-        <Button type='submit' className='w-full' isLoading={isLoading}>
+        <Button
+          type='submit'
+          className='w-full'
+          isLoading={isLoading}
+          disabled={disabled}
+        >
           {type === 'create' ? 'Crear punto' : 'Actualizar punto'}
         </Button>
       </form>

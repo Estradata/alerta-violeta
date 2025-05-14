@@ -78,7 +78,7 @@ export const ControlledSelect = <
                   disabled={disabled}
                >
                   <FormControl>
-                     <SelectTrigger>
+                     <SelectTrigger className='w-full'>
                         <SelectValue placeholder={placeholder} />
                      </SelectTrigger>
                   </FormControl>

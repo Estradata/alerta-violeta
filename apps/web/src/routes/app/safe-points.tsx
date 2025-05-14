@@ -1,13 +1,26 @@
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
 import { GOOGLE_MAPS_API_KEY } from '@/config'
-import { AlertMapMarker } from '@/features/monitoring/components/alert-map-marker'
+import { useSafePoints } from '@/features/safe-points/api/get-safe-points'
+import { CreateSafePoint } from '@/features/safe-points/components/create-safe-point'
+import { SafePointMapMarker } from '@/features/safe-points/components/safe-point-marker'
+import { SafePointsList } from '@/features/safe-points/components/safe-points-list'
+import { useDisclosure } from '@/hooks/use-disclosure'
 import { createFileRoute } from '@tanstack/react-router'
-import { AdvancedMarker, APIProvider, Map } from '@vis.gl/react-google-maps'
-import { ShieldIcon } from 'lucide-react'
+import {
+  APIProvider,
+  Map,
+  Marker,
+  useMap,
+  type MapMouseEvent,
+} from '@vis.gl/react-google-maps'
+import { MenuIcon, Search } from 'lucide-react'
 import { useState } from 'react'
 
 export const Route = createFileRoute('/app/safe-points')({
@@ -15,58 +28,106 @@ export const Route = createFileRoute('/app/safe-points')({
 })
 
 function RouteComponent() {
-  const defaultCenter = { lat: 20.66682, lng: -103.39182 }
-
-  const alerts = [
-    { lat: 20.6845, lng: -103.3497 },
-    { lat: 20.6712, lng: -103.4079 },
-    { lat: 20.7158, lng: -103.3661 },
-    { lat: 20.6501, lng: -103.2953 },
-    { lat: 20.7356, lng: -103.4164 },
-  ]
-  const points = [
-    {
-      id: '1',
-      position: { lat: 20.6845, lng: -103.3495 },
-      name: 'Parque Mirador de los Arcos',
-    },
-    {
-      id: '2',
-      position: { lat: 20.6879, lng: -103.432 },
-      name: 'Plaza Encino Real',
-    },
-    {
-      id: '3',
-      position: { lat: 20.6383, lng: -103.3967 },
-      name: 'Centro Cultural Santa Clara',
-    },
-    {
-      id: '4',
-      position: { lat: 20.725, lng: -103.2902 },
-      name: 'Jardines de los Agaves',
-    },
-    {
-      id: '5',
-      position: { lat: 20.6789, lng: -103.3731 },
-      name: 'Mercado Nueva Esperanza',
-    },
-  ]
-
-  const [selectedPoint, setSelectedPoint] = useState<string | null>(null)
-
   return (
     <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
-      <Map
-        defaultCenter={defaultCenter}
-        defaultZoom={10}
-        mapId='DEMO_MAP_ID'
-        disableDefaultUI={true}
-      >
-        {alerts.map((position, i) => {
-          return <AlertMapMarker position={position} key={i} />
-        })}
+      <Content />
+    </APIProvider>
+  )
+}
 
-        {points.map((point, i) => {
+function Content() {
+  const defaultCenter = { lat: 20.66682, lng: -103.39182 }
+  const defaultZoom = 10
+  const result = useSafePoints()
+  const safePoints = result.data?.data || []
+  const sheet = useDisclosure()
+
+  const [selectedPoint, setSelectedPoint] = useState<string | null>(null)
+  const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+
+  function handleMapClick(event: MapMouseEvent) {
+    if (event.detail.latLng) {
+      const lat = event.detail.latLng.lat
+      const lng = event.detail.latLng.lng
+      setMarkerPosition({ lat, lng })
+    }
+  }
+
+  function clearMarker() {
+    setMarkerPosition(null)
+  }
+
+  const map = useMap()
+
+  return (
+    <div className='flex flex-col h-full'>
+      {/* Barra superior con búsqueda y botón de menú */}
+      <div className='absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-4 bg-sidebar'>
+        <div className='flex items-center w-full max-w-md'>
+          <div className='relative w-full'>
+            <Search className='absolute left-2 top-2.5 h-4 w-4 text-muted-foreground' />
+            <Input
+              placeholder='Buscar lugares...'
+              className='pl-8 pr-4 shadow-none'
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className='flex items-center gap-2'>
+          <CreateSafePoint
+            disabled={!markerPosition}
+            data={{
+              lat: markerPosition?.lat || 0,
+              lng: markerPosition?.lng || 0,
+            }}
+            clearMarker={clearMarker}
+          />
+
+          <Sheet open={sheet.open} onOpenChange={sheet.onOpenChange}>
+            <SheetTrigger asChild>
+              <Button
+                variant='outline'
+                size='icon'
+                onClick={() => sheet.onOpen()}
+              >
+                <MenuIcon className='h-4 w-4' />
+                <span className='sr-only'>Menú</span>
+              </Button>
+            </SheetTrigger>
+
+            <SheetContent side='right' className='w-[300px] sm:w-[400px] p-4'>
+              <SheetTitle className='text-lg font-semibold mb-4'>
+                Puntos marcados ({safePoints.length})
+              </SheetTitle>
+
+              <SafePointsList
+                safePoints={safePoints}
+                onClick={(p) => {
+                  sheet.onClose()
+
+                  console.log({ map })
+                  map?.setCenter({ lat: p.lat, lng: p.lng })
+                  map?.setZoom(13)
+                }}
+              />
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+
+      <Map
+        mapId='SAFE_POINTS_MAP'
+        className='flex-1 w-full'
+        defaultCenter={defaultCenter}
+        defaultZoom={defaultZoom}
+        disableDefaultUI={true}
+        onClick={handleMapClick}
+      >
+        {markerPosition && <Marker position={markerPosition} />}
+
+        {safePoints.map((point, i) => {
           return (
             <SafePointMapMarker
               point={point}
@@ -77,48 +138,6 @@ function RouteComponent() {
           )
         })}
       </Map>
-    </APIProvider>
-  )
-}
-
-function SafePointMapMarker({
-  point,
-  selected,
-  selectPoint,
-}: {
-  point: {
-    id: string
-    name: string
-    position: { lat: number; lng: number }
-  }
-  selected?: boolean
-  selectPoint: (id: string | null) => void
-}) {
-  return (
-    <Popover
-      open={selected}
-      onOpenChange={(open) => {
-        if (!open) selectPoint(null)
-      }}
-    >
-      <PopoverTrigger asChild>
-        <AdvancedMarker
-          position={point.position}
-          onClick={() => {
-            selectPoint(point.id)
-          }}
-        >
-          <div>
-            <ShieldIcon className='h-10 w-auto stroke-purple-900 fill-purple-400 stroke-[1.2]' />
-          </div>
-        </AdvancedMarker>
-      </PopoverTrigger>
-
-      <PopoverContent className='w-56'>
-        <div>
-          <h1 className='text-sm font-medium'>{point.name}</h1>
-        </div>
-      </PopoverContent>
-    </Popover>
+    </div>
   )
 }
