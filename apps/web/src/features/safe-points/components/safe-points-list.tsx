@@ -1,6 +1,8 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { DeleteSafePoints } from '@/features/safe-points/components/delete-safe-points'
+import { useUiStore } from '@/features/safe-points/store/ui'
 import type { GetSafePointsResponse } from '@packages/safe-points/types'
 import { EditIcon, Trash2Icon } from 'lucide-react'
 
@@ -13,8 +15,12 @@ export function SafePointsList({
   safePoints: SP[]
   onClick?: (data: SP) => void
 }) {
+  const openDeleteDialog = useUiStore((s) => s.openDeleteDialog)
+
   return (
     <div className='flex flex-col h-full'>
+      <DeleteSafePoints />
+
       {safePoints.length === 0 ? (
         <div className='flex flex-col items-center justify-center h-40 text-muted-foreground'>
           <p>No hay puntos marcados</p>
@@ -61,7 +67,11 @@ export function SafePointsList({
                       variant='ghost'
                       size='icon'
                       className='h-7 w-7 text-destructive hover:text-destructive'
-                      // onClick={() => onDelete(point.id)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        // onDelete(point.id)
+                        openDeleteDialog([point])
+                      }}
                     >
                       <Trash2Icon className='h-4 w-4' />
                       <span className='sr-only'>Eliminar</span>

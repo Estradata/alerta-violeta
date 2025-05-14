@@ -17,7 +17,7 @@ import {
 import { useCreateSafePoint } from '@/features/safe-points/api/create-safe-point'
 import { SafePointForm } from '@/features/safe-points/components/safe-point-form'
 import { useAuth } from '@/auth'
-import { PlusIcon } from 'lucide-react'
+import { CheckCheckIcon } from 'lucide-react'
 
 const defaultValues: SafePointData = {
   name: '',
@@ -73,7 +73,7 @@ export function CreateSafePoint({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         <Button size='icon' disabled={disabled}>
-          <PlusIcon className='h-4 w-4' />
+          <CheckCheckIcon className='h-4 w-4' />
           <span className='sr-only'>Añadir punto</span>
         </Button>
       </DialogTrigger>

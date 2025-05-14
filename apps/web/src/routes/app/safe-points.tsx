@@ -20,7 +20,7 @@ import {
   useMap,
   type MapMouseEvent,
 } from '@vis.gl/react-google-maps'
-import { MenuIcon, Search } from 'lucide-react'
+import { MenuIcon, PlusIcon, Search, XIcon } from 'lucide-react'
 import { useState } from 'react'
 
 export const Route = createFileRoute('/app/safe-points')({
@@ -41,21 +41,26 @@ function Content() {
   const result = useSafePoints()
   const safePoints = result.data?.data || []
   const sheet = useDisclosure()
-
   const [selectedPoint, setSelectedPoint] = useState<string | null>(null)
-  const [markerPosition, setMarkerPosition] = useState<google.maps.LatLngLiteral | null>(null)
+
   const [searchQuery, setSearchQuery] = useState('')
 
+  const [markerMode, setMarkerMode] = useState<'create' | 'edit' | null>(null)
+  const [marker, setMarker] = useState<google.maps.LatLngLiteral | null>(null)
+
   function handleMapClick(event: MapMouseEvent) {
+    if (!markerMode) return
+
     if (event.detail.latLng) {
       const lat = event.detail.latLng.lat
       const lng = event.detail.latLng.lng
-      setMarkerPosition({ lat, lng })
+      setMarker({ lat, lng })
     }
   }
 
   function clearMarker() {
-    setMarkerPosition(null)
+    setMarkerMode(null)
+    setMarker(null)
   }
 
   const map = useMap()
@@ -75,15 +80,35 @@ function Content() {
             />
           </div>
         </div>
+
         <div className='flex items-center gap-2'>
-          <CreateSafePoint
-            disabled={!markerPosition}
-            data={{
-              lat: markerPosition?.lat || 0,
-              lng: markerPosition?.lng || 0,
-            }}
-            clearMarker={clearMarker}
-          />
+          {markerMode ? (
+            <>
+              <Button size='icon' variant='outline' onClick={clearMarker}>
+                <XIcon className='h-4 w-4' />
+                <span className='sr-only'>Cancelar</span>
+              </Button>
+
+              <CreateSafePoint
+                disabled={!marker}
+                clearMarker={clearMarker}
+                data={{
+                  lat: marker?.lat || 0,
+                  lng: marker?.lng || 0,
+                }}
+              />
+            </>
+          ) : (
+            <Button
+              size='icon'
+              onClick={() => {
+                setMarkerMode('create')
+              }}
+            >
+              <PlusIcon className='h-4 w-4' />
+              <span className='sr-only'>Añadir punto</span>
+            </Button>
+          )}
 
           <Sheet open={sheet.open} onOpenChange={sheet.onOpenChange}>
             <SheetTrigger asChild>
@@ -125,7 +150,7 @@ function Content() {
         disableDefaultUI={true}
         onClick={handleMapClick}
       >
-        {markerPosition && <Marker position={markerPosition} />}
+        {marker && <Marker position={marker} />}
 
         {safePoints.map((point, i) => {
           return (
