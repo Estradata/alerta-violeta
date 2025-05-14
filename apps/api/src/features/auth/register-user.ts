@@ -1,18 +1,20 @@
-import { checkIsEmailAvailable } from '@/features/auth/utils'
+import { checkIsUserEmailAvailable } from '@/features/auth/utils'
 import { db } from '@/lib/db'
-import { ValidationError } from '@/lib/errors'
+import { ValidationError } from '@packages/errors'
+import { encodeUserToken } from '@/lib/jwt'
 import { hash } from '@/utils/hash'
-import { RegistrationData } from '@packages/auth/schema'
+import { registrationSchema } from '@packages/auth/schema'
+import { LoginResponse } from '@packages/auth/types'
 import { RequestHandler } from 'express'
 
 export const registerUser: RequestHandler = async (req, res, next) => {
   try {
-    const data = req.body as RegistrationData
+    const data = registrationSchema.parse(req.body)
 
     /**
      * Check email available
      */
-    const available = await checkIsEmailAvailable(data.email)
+    const available = await checkIsUserEmailAvailable(data.email)
     if (!available)
       throw new ValidationError({
         email: 'Este correo no está disponible',
@@ -34,17 +36,27 @@ export const registerUser: RequestHandler = async (req, res, next) => {
      * Create user
      */
     const hashedPassword = await hash(data.password)
-    const newUser = await db.user.create({
+    const { password, ...user } = await db.user.create({
       data: {
         ...data,
         password: hashedPassword,
       },
     })
 
+    const userForToken = {
+      id: user.id,
+      email: user.email,
+    }
+
+    const token = encodeUserToken(userForToken)
+
     res.json({
       message: 'User registration successful',
-      data: newUser,
-    })
+      data: {
+        user,
+        token,
+      },
+    } satisfies LoginResponse)
   } catch (err) {
     next(err)
   }

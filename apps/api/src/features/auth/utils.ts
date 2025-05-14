@@ -1,11 +1,11 @@
 import { db } from '@/lib/db'
 
-export async function checkIsEmailAvailable(email: string) {
-   const record = await db.user.findFirst({
-      where: {
-         email,
-      },
-   })
+export async function checkIsUserEmailAvailable(email: string) {
+  const record = await db.user.findFirst({
+    where: {
+      email,
+    },
+  })
 
-   return !record
+  return !record
 }

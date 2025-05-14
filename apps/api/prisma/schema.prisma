@@ -12,18 +12,16 @@ model Account {
   id   String @id @default(uuid())
   name String
 
-  users            User[]
-  safePoints       SafePoint[]
-  EmergencyContact EmergencyContact[]
+  users  User[]
+  admins Admin[]
+
+  safePoints        SafePoint[]
+  emergencyContacts EmergencyContact[]
 
   @@map("accounts")
 }
 
-enum UserRoles {
-  ADMIN
-  MEMBER
-}
-
+// Mobile App Users
 enum UserStatus {
   ACTIVE
   BLOCKED
@@ -38,9 +36,10 @@ model User {
   name     String
   password String
 
-  role   UserRoles  @default(MEMBER)
   status UserStatus @default(ACTIVE)
   alerts Alert[]
+
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@map("users")
 }
@@ -83,4 +82,46 @@ model EmergencyContact {
   description String
 
   @@map("emergency_contacts")
+}
+
+// Web Panel Users
+model Admin {
+  id        String  @id @default(uuid())
+  account   Account @relation(fields: [accountId], references: [id])
+  accountId String  @map("account_id")
+
+  email    String @unique
+  password String
+
+  // A defined role, with pre-defined permissions
+  role              AdminRole?   @relation(fields: [roleId], references: [id])
+  roleId            String?
+  // OR a list of custom permissions
+  customPermissions Permission[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("admins")
+}
+
+model AdminRole {
+  id   String @id @default(uuid())
+  name String @unique
+
+  permissions Permission[]
+  users       Admin[]
+
+  @@map("admin_roles")
+}
+
+model Permission {
+  id     String @id @default(uuid())
+  module String
+  action String
+
+  roles AdminRole[]
+  users Admin[]
+
+  @@unique([module, action])
+  @@map("permissions")
 }

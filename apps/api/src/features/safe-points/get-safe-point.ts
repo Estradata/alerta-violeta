@@ -1,9 +1,9 @@
 import { db } from '@/lib/db'
 import { RequestHandler } from 'express'
-import { SafePoint } from '@packages/safe-points/types'
-import { NotFoundError } from '@/lib/errors'
+import { NotFoundError } from '@packages/errors'
+import type { GetSafePointResponse } from '@packages/safe-points/types'
 
-export const getSafePoint: RequestHandler<{ userId: string }> = async (
+export const getSafePoint: RequestHandler<{ id: string }> = async (
   req,
   res,
   next
@@ -11,13 +11,13 @@ export const getSafePoint: RequestHandler<{ userId: string }> = async (
   try {
     const data = await db.safePoint.findUnique({
       where: {
-        id: req.params.userId,
+        id: req.params.id,
       },
     })
 
     if (!data) throw new NotFoundError()
 
-    res.json({ data: data satisfies SafePoint })
+    res.json({ data } satisfies GetSafePointResponse)
   } catch (err) {
     next(err)
   }

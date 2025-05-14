@@ -1,5 +1,8 @@
-import { SafePointData } from './schema'
+import type { SafePointData } from './schema'
 
+/**
+ * Model
+ */
 export type SafePoint = {
   id: string
   accountId: string
@@ -7,6 +10,30 @@ export type SafePoint = {
   address: string
   lat: number
   lng: number
-  // autocomplete 'type' but also any other string
-  type: SafePointData['type'] | {}
+  type: SafePointData['type'] | {} | string
+}
+
+/**
+ * API Responses
+ */
+export type GetSafePointResponse = {
+  data: SafePoint
+}
+
+export type GetSafePointsResponse = {
+  data: SafePoint[]
+}
+
+export type CreateSafePointResponse = {
+  message: string
+  data: SafePoint
+}
+
+export type UpdateSafePointResponse = {
+  message: string
+  data: SafePoint
+}
+
+export type DeleteSafePointsResponse = {
+  message: string
 }
