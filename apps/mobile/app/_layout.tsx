@@ -9,10 +9,12 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 export default function RootLayout() {
+  const queryClient = new QueryClient();
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -23,6 +25,7 @@ export default function RootLayout() {
   if (!loaded) return null;
 
   return (
+    <QueryClientProvider client={queryClient}>
     <GluestackUIProvider mode="light">
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack screenOptions={{ headerShown: false }}>
@@ -36,5 +39,6 @@ export default function RootLayout() {
         <StatusBar style="auto" />
       </ThemeProvider>
     </GluestackUIProvider>
+    </QueryClientProvider>
   );
 }
