@@ -35,11 +35,7 @@ export function CreateSafePoint({
 }: {
   disabled?: boolean
   clearMarker?: () => void
-  data: {
-    address?: string
-    lat: number
-    lng: number
-  }
+  data: Partial<SafePointData>
 }) {
   const user = useAuth().user!
   const { open, onOpenChange, onClose } = useDisclosure()
@@ -47,6 +43,7 @@ export function CreateSafePoint({
     resolver: zodResolver(safePointSchema),
     values: {
       ...defaultValues,
+      name: data.name || '',
       address: data?.address || '',
       lat: data?.lat || 0,
       lng: data?.lng || 0,

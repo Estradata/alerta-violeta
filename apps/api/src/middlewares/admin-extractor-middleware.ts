@@ -19,15 +19,11 @@ export default async function adminExtractor(
 
     const decodedToken = decodeAdminToken(token)
 
-    console.log(decodedToken)
-
     if (!token || !decodedToken.id) {
       throw new TokenError()
     }
 
     const admin = await db.admin.findUnique({ where: { id: decodedToken.id } })
-
-    console.log(admin)
 
     if (!admin) throw new TokenError()
 

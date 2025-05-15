@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button'
 import {
   Command,
   CommandEmpty,
-  CommandGroup,
   CommandItem,
   CommandList,
 } from '@/components/ui/command'
@@ -19,6 +18,7 @@ import { CreateSafePoint } from '@/features/safe-points/components/create-safe-p
 import { SafePointMapMarker } from '@/features/safe-points/components/safe-point-marker'
 import { SafePointsList } from '@/features/safe-points/components/safe-points-list'
 import { useAutocompleteSuggestions } from '@/hooks/use-autocomplete-suggestions'
+import { useDebounce } from '@/hooks/use-debounce'
 import { useDisclosure, type UseDisclosureReturn } from '@/hooks/use-disclosure'
 import { createFileRoute } from '@tanstack/react-router'
 import {
@@ -30,7 +30,6 @@ import {
 } from '@vis.gl/react-google-maps'
 import { MenuIcon, PlusIcon, Search, XIcon } from 'lucide-react'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { toast } from 'sonner'
 
 export const Route = createFileRoute('/app/safe-points')({
   component: RouteComponent,
@@ -44,6 +43,12 @@ function RouteComponent() {
   )
 }
 
+type Marker = google.maps.LatLngLiteral & {
+  name?: string
+  address?: string
+  googlePlaceId?: string
+}
+
 function Content() {
   const defaultCenter = { lat: 20.66682, lng: -103.39182 }
   const defaultZoom = 10
@@ -53,7 +58,8 @@ function Content() {
   const autocomplete = useDisclosure()
   const [selectedPoint, setSelectedPoint] = useState<string | null>(null)
   const [markerMode, setMarkerMode] = useState<'create' | 'edit' | null>(null)
-  const [marker, setMarker] = useState<google.maps.LatLngLiteral | null>(null)
+  const [marker, setMarker] = useState<Marker | null>(null)
+  const map = useMap()
 
   function handleMapClick(event: MapMouseEvent) {
     if (!markerMode) return
@@ -70,10 +76,32 @@ function Content() {
     setMarker(null)
   }
 
-  const map = useMap()
+  function onPlaceSelect(place: Place) {
+    if (!map) return
 
-  const [selectedPlace, setSelectedPlace] =
-    useState<google.maps.places.Place | null>(null)
+    if (place.lat && place.lng) {
+      const location = { lat: place.lat, lng: place.lng }
+
+      /**
+       * Create new marker
+       */
+      setMarkerMode('create')
+      setMarker({
+        ...location,
+        name: place.mainText,
+        address: place.address,
+        googlePlaceId: place.id,
+      })
+
+      /**
+       * Center new point
+       */
+      map.setCenter(location)
+      map.setZoom(12)
+    }
+
+    autocomplete.onClose()
+  }
 
   return (
     <div
@@ -87,10 +115,7 @@ function Content() {
     >
       {/* Barra superior con búsqueda y botón de menú */}
       <div className='absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-4 bg-sidebar gap-4'>
-        <AutocompleteControl
-          onPlaceSelect={setSelectedPlace}
-          {...autocomplete}
-        />
+        <AutocompleteControl onPlaceSelect={onPlaceSelect} {...autocomplete} />
 
         <div className='flex items-center gap-1 md:gap-2'>
           {markerMode ? (
@@ -104,6 +129,9 @@ function Content() {
                 disabled={!marker}
                 clearMarker={clearMarker}
                 data={{
+                  name: marker?.name,
+                  address: marker?.address,
+                  googlePlaceId: marker?.googlePlaceId,
                   lat: marker?.lat || 0,
                   lng: marker?.lng || 0,
                 }}
@@ -176,45 +204,47 @@ function Content() {
   )
 }
 
+type Place = {
+  id: string
+  mainText: string
+  secondaryText: string
+  text: string
+  address: string
+  lat: number | undefined
+  lng: number | undefined
+}
 function AutocompleteControl({
   onPlaceSelect,
   ...control
 }: {
-  onPlaceSelect: (place: google.maps.places.Place | null) => void
+  onPlaceSelect: (place: Place) => void
 } & UseDisclosureReturn) {
   const [searchQuery, setSearchQuery] = useState<string>('')
-
-  const { suggestions, resetSession, isLoading } =
-    useAutocompleteSuggestions(searchQuery)
-
-  const handleInputChange = useCallback(
-    (value: google.maps.places.PlacePrediction | string) => {
-      if (typeof value === 'string') {
-        setSearchQuery(value)
-      }
-    },
-    []
-  )
+  const { suggestions, isLoading } = useAutocompleteSuggestions(searchQuery)
+  const handleInputChange = useDebounce((text: string) => {
+    setSearchQuery(text)
+  }, 500)
 
   const handleSelect = useCallback(
-    (prediction: google.maps.places.PlacePrediction | string) => {
+    async (prediction: google.maps.places.PlacePrediction | string) => {
       if (typeof prediction === 'string') return
 
       const place = prediction.toPlace()
-      place
-        .fetchFields({
-          fields: [
-            'viewport',
-            'location',
-            'svgIconMaskURI',
-            'iconBackgroundColor',
-          ],
-        })
-        .then(() => {
-          resetSession()
-          onPlaceSelect(place)
-          setSearchQuery('')
-        })
+      const details = await place.fetchFields({
+        fields: ['location', 'formattedAddress'],
+      })
+
+      const data = {
+        id: place.id,
+        mainText: prediction.mainText?.text || '',
+        secondaryText: prediction.secondaryText?.text || '',
+        text: prediction.text.text || '',
+        address: details.place.formattedAddress || '',
+        lat: details.place.location?.lat(),
+        lng: details.place.location?.lng(),
+      }
+
+      onPlaceSelect(data)
     },
     [onPlaceSelect]
   )
@@ -226,45 +256,6 @@ function AutocompleteControl({
         .map(({ placePrediction }) => placePrediction!),
     [suggestions]
   )
-
-  const items = [
-    {
-      id: '1',
-      name: 'Parque Nacional Torres del Paine',
-      location: 'Patagonia, Chile',
-      category: 'Parques Nacionales',
-    },
-    {
-      id: '2',
-      name: 'Machu Picchu',
-      location: 'Cusco, Perú',
-      category: 'Sitios Históricos',
-    },
-    {
-      id: '3',
-      name: 'Playa del Carmen',
-      location: 'Quintana Roo, México',
-      category: 'Playas',
-    },
-    {
-      id: '4',
-      name: 'Cataratas del Iguazú',
-      location: 'Argentina/Brasil',
-      category: 'Maravillas Naturales',
-    },
-    {
-      id: '5',
-      name: 'Cartagena de Indias',
-      location: 'Colombia',
-      category: 'Ciudades Coloniales',
-    },
-    {
-      id: '6',
-      name: 'Salar de Uyuni',
-      location: 'Bolivia',
-      category: 'Paisajes Únicos',
-    },
-  ]
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -278,8 +269,7 @@ function AutocompleteControl({
             ref={inputRef}
             placeholder='Buscar lugares...'
             className='pl-8 pr-4 shadow-none'
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleInputChange(e.target.value)}
             onFocus={() => control.onOpen()}
           />
         </div>
@@ -289,37 +279,35 @@ function AutocompleteControl({
         <div className='absolute top-full left-0 right-0 w-full mt-1 z-50'>
           <Command className='rounded-lg border shadow-md bg-white'>
             <CommandList className='max-h-[300px] overflow-auto'>
-              <CommandEmpty>No se encontraron resultados.</CommandEmpty>
-              {Object.entries(
-                items.reduce(
-                  (acc, item) => {
-                    if (!acc[item.category]) {
-                      acc[item.category] = []
-                    }
-                    acc[item.category].push(item)
-                    return acc
-                  },
-                  {} as Record<string, typeof items>
-                )
-              ).map(([category, categoryItems]) => (
-                <CommandGroup key={category} heading={category}>
-                  {categoryItems.map((item) => (
+              {!isLoading && (
+                <CommandEmpty>No se encontraron resultados.</CommandEmpty>
+              )}
+
+              {isLoading ? (
+                <CommandEmpty>Buscando...</CommandEmpty>
+              ) : (
+                predictions.map((prediction) => {
+                  return (
                     <CommandItem
-                      key={item.id}
+                      key={prediction.placeId}
                       className='flex flex-col items-start py-2 cursor-pointer'
                       onSelect={() => {
-                        control.onClose()
-                        toast.success('ok')
+                        handleSelect(prediction)
                       }}
                     >
-                      <div className='font-medium'>{item.name}</div>
+                      <div className='font-medium'>
+                        {prediction.mainText?.text || ''}
+                      </div>
                       <div className='text-xs text-muted-foreground'>
-                        {item.location}
+                        {prediction.text.text}
+                      </div>
+                      <div className='text-xs text-muted-foreground'>
+                        {prediction.secondaryText?.text}
                       </div>
                     </CommandItem>
-                  ))}
-                </CommandGroup>
-              ))}
+                  )
+                })
+              )}
             </CommandList>
           </Command>
         </div>
