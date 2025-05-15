@@ -18,7 +18,6 @@ const queryClient = new QueryClient();
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const { user } = useAuth();
-  console.log("RootLayoutNav+++++++", user);
 
   return (
     <GluestackUIProvider mode="light">
