@@ -6,7 +6,8 @@
       "@/*": ["./*"],
       "@package/*": ["../../packages/*"],
       "tailwind.config": ["./tailwind.config.js"]
-    }
+    },
+    "skipLibCheck": true
   },
   "include": [
     "**/*.ts",
