@@ -18,16 +18,6 @@ function setStoredToken(token: string | null) {
   }
 }
 
-export function getRedirectPath(role: AuthUser['role']) {
-  switch (role) {
-    case 'ADMIN':
-      return '/app/dashboard'
-
-    case 'MEMBER':
-      return '/app/dashboard'
-  }
-}
-
 export function useAuth(): AuthContext {
   const router = useRouter()
   const user = useGlobalStore((s) => s.user)
@@ -37,7 +27,8 @@ export function useAuth(): AuthContext {
     (user: AuthUser, token: string) => {
       setUser(user)
       setStoredToken(token)
-      router?.navigate({ to: getRedirectPath(user.role) })
+      // TODO:
+      router?.navigate({ to: '/app/safe-points' })
     },
     [router, setUser]
   )

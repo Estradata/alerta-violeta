@@ -29,11 +29,6 @@ function HomeComponent() {
             Go to the public login page.
           </Link>
         </li>
-        <li>
-          <Link to='/app/dashboard' className='text-blue-500 hover:opacity-75'>
-            Go to the auth-only dashboard page.
-          </Link>
-        </li>
       </ol>
     </div>
   )
