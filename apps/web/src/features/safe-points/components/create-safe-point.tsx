@@ -44,6 +44,7 @@ export function CreateSafePoint({
     values: {
       ...defaultValues,
       name: data.name || '',
+      googlePlaceId: data.googlePlaceId || null,
       address: data?.address || '',
       lat: data?.lat || 0,
       lng: data?.lng || 0,
@@ -59,7 +60,6 @@ export function CreateSafePoint({
   })
 
   function onSubmit(data: SafePointData) {
-    console.log(data)
     createMutation.mutate({
       ...data,
       accountId: user.accountId,

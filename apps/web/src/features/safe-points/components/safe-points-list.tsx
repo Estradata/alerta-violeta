@@ -2,24 +2,30 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { DeleteSafePoints } from '@/features/safe-points/components/delete-safe-points'
+import { UpdateSafePoint } from '@/features/safe-points/components/update-safe-point'
 import { useUiStore } from '@/features/safe-points/store/ui'
+import type { Marker } from '@/routes/app/safe-points'
 import type { GetSafePointsResponse } from '@packages/safe-points/types'
-import { EditIcon, Trash2Icon } from 'lucide-react'
+import { EditIcon, MapIcon, Trash2Icon } from 'lucide-react'
 
 type SP = GetSafePointsResponse['data'][number]
 
 export function SafePointsList({
+  onEditMarkerPosition,
   safePoints,
   onClick,
 }: {
+  onEditMarkerPosition: (marker: Marker) => void
   safePoints: SP[]
   onClick?: (data: SP) => void
 }) {
   const openDeleteDialog = useUiStore((s) => s.openDeleteDialog)
+  const openUpdateDialog = useUiStore((s) => s.openUpdateDialog)
 
   return (
     <div className='flex flex-col h-full'>
       <DeleteSafePoints />
+      <UpdateSafePoint />
 
       {safePoints.length === 0 ? (
         <div className='flex flex-col items-center justify-center h-40 text-muted-foreground'>
@@ -37,30 +43,44 @@ export function SafePointsList({
                   onClick?.(point)
                 }}
               >
-                <div className='flex items-start justify-between'>
-                  <div>
-                    <h3 className='font-medium'>{point.name}</h3>
-
-                    <p className='text-sm text-muted-foreground line-clamp-2'>
-                      {point.address}
-                    </p>
-
-                    <div className='mt-2'>
-                      <Badge variant='outline' className='text-xs'>
-                        {point.type as string}
-                      </Badge>
-                    </div>
-                  </div>
+                <div className='flex items-start justify-between gap-4'>
+                  <h3 className='font-medium'>{point.name}</h3>
 
                   <div className='flex space-x-1'>
                     <Button
                       variant='ghost'
                       size='icon'
                       className='h-7 w-7'
-                      // onClick={() => onEdit(point)}
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        onEditMarkerPosition({
+                          safePointId: point.id,
+                          
+                          lat: point.lat,
+                          lng: point.lng,
+                          address: point.address,
+                          googlePlaceId: point.googlePlaceId || '',
+                          name: point.name,
+                        })
+                      }}
+                    >
+                      <MapIcon className='h-4 w-4' />
+                      <span className='sr-only'>
+                        Editar posición en el mapa
+                      </span>
+                    </Button>
+
+                    <Button
+                      variant='ghost'
+                      size='icon'
+                      className='h-7 w-7'
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        openUpdateDialog(point)
+                      }}
                     >
                       <EditIcon className='h-4 w-4' />
-                      <span className='sr-only'>Editar</span>
+                      <span className='sr-only'>Editar datos</span>
                     </Button>
 
                     <Button
@@ -69,13 +89,24 @@ export function SafePointsList({
                       className='h-7 w-7 text-destructive hover:text-destructive'
                       onClick={(e) => {
                         e.stopPropagation()
-                        // onDelete(point.id)
                         openDeleteDialog([point])
                       }}
                     >
                       <Trash2Icon className='h-4 w-4' />
                       <span className='sr-only'>Eliminar</span>
                     </Button>
+                  </div>
+                </div>
+
+                <div>
+                  <p className='text-sm text-muted-foreground line-clamp-2'>
+                    {point.address}
+                  </p>
+
+                  <div className='mt-2'>
+                    <Badge variant='outline' className='text-xs'>
+                      {point.type as string}
+                    </Badge>
                   </div>
                 </div>
 

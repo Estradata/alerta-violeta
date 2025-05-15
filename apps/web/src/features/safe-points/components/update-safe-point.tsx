@@ -27,6 +27,7 @@ export function UpdateSafePoint() {
       id: data?.id || '',
       accountId: user.accountId,
       name: data?.name || '',
+      googlePlaceId: data?.googlePlaceId || null,
       address: data?.address || '',
       lat: data?.lat || 0,
       lng: data?.lng || 0,

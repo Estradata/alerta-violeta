@@ -14,12 +14,14 @@ import {
 } from '@/components/ui/sheet'
 import { GOOGLE_MAPS_API_KEY } from '@/config'
 import { useSafePoints } from '@/features/safe-points/api/get-safe-points'
+import { useUpdateSafePoint } from '@/features/safe-points/api/update-safe-point'
 import { CreateSafePoint } from '@/features/safe-points/components/create-safe-point'
 import { SafePointMapMarker } from '@/features/safe-points/components/safe-point-marker'
 import { SafePointsList } from '@/features/safe-points/components/safe-points-list'
 import { useAutocompleteSuggestions } from '@/hooks/use-autocomplete-suggestions'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useDisclosure, type UseDisclosureReturn } from '@/hooks/use-disclosure'
+import type { SafePointData } from '@packages/safe-points/schema'
 import { createFileRoute } from '@tanstack/react-router'
 import {
   APIProvider,
@@ -28,7 +30,7 @@ import {
   useMap,
   type MapMouseEvent,
 } from '@vis.gl/react-google-maps'
-import { MenuIcon, PlusIcon, Search, XIcon } from 'lucide-react'
+import { MenuIcon, PlusIcon, SaveIcon, Search, XIcon } from 'lucide-react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 
 export const Route = createFileRoute('/app/safe-points')({
@@ -43,7 +45,8 @@ function RouteComponent() {
   )
 }
 
-type Marker = google.maps.LatLngLiteral & {
+export type Marker = google.maps.LatLngLiteral & {
+  safePointId?: string
   name?: string
   address?: string
   googlePlaceId?: string
@@ -53,6 +56,7 @@ function Content() {
   const defaultCenter = { lat: 20.66682, lng: -103.39182 }
   const defaultZoom = 10
   const result = useSafePoints()
+  const updateMutation = useUpdateSafePoint()
   const safePoints = result.data?.data || []
   const sheet = useDisclosure()
   const autocomplete = useDisclosure()
@@ -61,22 +65,27 @@ function Content() {
   const [marker, setMarker] = useState<Marker | null>(null)
   const map = useMap()
 
+  function clearMarker() {
+    setMarkerMode(null)
+    setMarker(null)
+  }
+
   function handleMapClick(event: MapMouseEvent) {
     if (!markerMode) return
 
     if (event.detail.latLng) {
       const lat = event.detail.latLng.lat
       const lng = event.detail.latLng.lng
-      setMarker({ lat, lng })
+
+      setMarker((prev) => ({
+        ...prev,
+        lat,
+        lng,
+      }))
     }
   }
 
-  function clearMarker() {
-    setMarkerMode(null)
-    setMarker(null)
-  }
-
-  function onPlaceSelect(place: Place) {
+  function onAutocompletePlaceSelect(place: Place) {
     if (!map) return
 
     if (place.lat && place.lng) {
@@ -103,6 +112,30 @@ function Content() {
     autocomplete.onClose()
   }
 
+  function onEditMarkerPosition(marker: Marker) {
+    sheet.onClose()
+    setMarkerMode('edit')
+    setMarker(marker)
+    map?.setCenter({ lat: marker.lat, lng: marker.lng })
+    map?.setZoom(13)
+  }
+
+  function onSaveSafePoint() {
+    const data = safePoints.find((p) => p.id === marker?.safePointId)
+    if (!data || !marker) return
+
+    setMarkerMode(null)
+
+    updateMutation.mutate({
+      ...data,
+      type: data.type as SafePointData['type'],
+      lat: marker?.lat,
+      lng: marker?.lng,
+    })
+  }
+
+  const filteredPoints = markerMode === 'edit' ? [] : safePoints
+
   return (
     <div
       className='flex flex-col h-full'
@@ -115,10 +148,25 @@ function Content() {
     >
       {/* Barra superior con búsqueda y botón de menú */}
       <div className='absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-4 bg-sidebar gap-4'>
-        <AutocompleteControl onPlaceSelect={onPlaceSelect} {...autocomplete} />
+        <AutocompleteControl
+          onPlaceSelect={onAutocompletePlaceSelect}
+          {...autocomplete}
+        />
 
         <div className='flex items-center gap-1 md:gap-2'>
-          {markerMode ? (
+          {markerMode === null && (
+            <Button
+              size='icon'
+              onClick={() => {
+                setMarkerMode('create')
+              }}
+            >
+              <PlusIcon className='h-4 w-4' />
+              <span className='sr-only'>Añadir punto</span>
+            </Button>
+          )}
+
+          {markerMode === 'create' && (
             <>
               <Button size='icon' variant='outline' onClick={clearMarker}>
                 <XIcon className='h-4 w-4' />
@@ -137,16 +185,22 @@ function Content() {
                 }}
               />
             </>
-          ) : (
-            <Button
-              size='icon'
-              onClick={() => {
-                setMarkerMode('create')
-              }}
-            >
-              <PlusIcon className='h-4 w-4' />
-              <span className='sr-only'>Añadir punto</span>
-            </Button>
+          )}
+
+          {markerMode === 'edit' && (
+            <>
+              <Button size='icon' variant='outline' onClick={clearMarker}>
+                <XIcon className='h-4 w-4' />
+                <span className='sr-only'>Cancelar</span>
+              </Button>
+
+              <Button size='icon' onClick={onSaveSafePoint}>
+                <SaveIcon className='h-4 w-4' />
+                <span className='sr-only'>
+                  Guardar nueva ubicación del punto
+                </span>
+              </Button>
+            </>
           )}
 
           <Sheet open={sheet.open} onOpenChange={sheet.onOpenChange}>
@@ -168,6 +222,7 @@ function Content() {
 
               <SafePointsList
                 safePoints={safePoints}
+                onEditMarkerPosition={onEditMarkerPosition}
                 onClick={(p) => {
                   sheet.onClose()
                   map?.setCenter({ lat: p.lat, lng: p.lng })
@@ -189,7 +244,7 @@ function Content() {
       >
         {marker && <Marker position={marker} />}
 
-        {safePoints.map((point, i) => {
+        {filteredPoints.map((point, i) => {
           return (
             <SafePointMapMarker
               point={point}
