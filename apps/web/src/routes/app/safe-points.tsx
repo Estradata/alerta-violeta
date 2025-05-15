@@ -65,7 +65,7 @@ function Content() {
   const [marker, setMarker] = useState<Marker | null>(null)
   const map = useMap()
 
-  function clearMarker() {
+  function resetMarker() {
     setMarkerMode(null)
     setMarker(null)
   }
@@ -124,14 +124,14 @@ function Content() {
     const data = safePoints.find((p) => p.id === marker?.safePointId)
     if (!data || !marker) return
 
-    setMarkerMode(null)
-
     updateMutation.mutate({
       ...data,
       type: data.type as SafePointData['type'],
       lat: marker?.lat,
       lng: marker?.lng,
     })
+
+    resetMarker()
   }
 
   const filteredPoints = markerMode === 'edit' ? [] : safePoints
@@ -168,14 +168,14 @@ function Content() {
 
           {markerMode === 'create' && (
             <>
-              <Button size='icon' variant='outline' onClick={clearMarker}>
+              <Button size='icon' variant='outline' onClick={resetMarker}>
                 <XIcon className='h-4 w-4' />
                 <span className='sr-only'>Cancelar</span>
               </Button>
 
               <CreateSafePoint
                 disabled={!marker}
-                clearMarker={clearMarker}
+                clearMarker={resetMarker}
                 data={{
                   name: marker?.name,
                   address: marker?.address,
@@ -189,7 +189,7 @@ function Content() {
 
           {markerMode === 'edit' && (
             <>
-              <Button size='icon' variant='outline' onClick={clearMarker}>
+              <Button size='icon' variant='outline' onClick={resetMarker}>
                 <XIcon className='h-4 w-4' />
                 <span className='sr-only'>Cancelar</span>
               </Button>
