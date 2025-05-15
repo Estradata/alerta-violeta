@@ -7,7 +7,7 @@ import type { User } from '@packages/users/types'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 import { AlertCircleIcon, CheckCircle } from 'lucide-react'
-import { USER_STATUS_LABELS } from '@packages/users/consts'
+import { USER_STATUS_LABELS, userStatuses } from '@packages/users/consts'
 
 export const Route = createFileRoute('/app/users')({
   component: RouteComponent,
@@ -16,6 +16,15 @@ export const Route = createFileRoute('/app/users')({
 function RouteComponent() {
   const result = useUsers()
   const users = result.data?.data || []
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(date)
+  }
 
   const columns: ColumnDef<(typeof users)[number]>[] = [
     selectColumn(),
@@ -62,6 +71,25 @@ function RouteComponent() {
         return <UserStatusBadge status={user.status} />
       },
     },
+    {
+      accessorKey: 'createdAt',
+      header: ({ column }) => (
+        <TableColumnHeader column={column} title='Fecha de Registro' />
+      ),
+      cell: ({ row }) => {
+        return formatDate(new Date(row.original.createdAt))
+      },
+    },
+    {
+      accessorKey: 'lastLogin',
+      header: ({ column }) => (
+        <TableColumnHeader column={column} title='Último inicio de sesión' />
+      ),
+      cell: ({ row }) => {
+        return formatDate(new Date(row.original.createdAt))
+      },
+    },
+
     // {
     //   id: 'actions',
     //   header: ({ column }) => (
@@ -109,6 +137,13 @@ function RouteComponent() {
       subtitle='Administra los usuarios de la aplicación'
     >
       <Table
+        filters={[
+          {
+            column: 'status',
+            options: userStatuses,
+            title: 'Estatus',
+          },
+        ]}
         searchColumn='name'
         columns={columns}
         data={users}

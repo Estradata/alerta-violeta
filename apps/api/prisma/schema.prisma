@@ -39,6 +39,7 @@ model User {
   status UserStatus @default(ACTIVE)
   alerts Alert[]
 
+  lastLogin DateTime @default(now()) @map("last_login")
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("users")
