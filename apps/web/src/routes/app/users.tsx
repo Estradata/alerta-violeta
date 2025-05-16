@@ -6,11 +6,18 @@ import { cn } from '@/lib/utils'
 import type { User } from '@packages/users/types'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
-import { AlertCircleIcon, CheckCircle } from 'lucide-react'
+import {
+  AlertCircleIcon,
+  BellIcon,
+  CheckCircle,
+  ContactIcon,
+} from 'lucide-react'
 import { USER_STATUS_LABELS, userStatuses } from '@packages/users/consts'
 import { useDisclosure } from '@/hooks/use-disclosure'
 import { useUpdateUserStatus } from '@/features/users/api/update-user-status'
 import { ConfirmationDialog } from '@/components/confirmation-dialog'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { EmptyPlaceholder } from '@/components/empty-placeholder'
 
 export const Route = createFileRoute('/app/users')({
   component: RouteComponent,
@@ -138,19 +145,43 @@ function RouteComponent() {
       title='Usuarios'
       subtitle='Administra los usuarios de la aplicación'
     >
-      <Table
-        filters={[
-          {
-            column: 'status',
-            options: userStatuses,
-            title: 'Estatus',
-          },
-        ]}
-        searchColumn='name'
-        columns={columns}
-        data={users}
-        rowsPerPageLabel='Usuarios por página'
-      ></Table>
+      <Tabs defaultValue='users' className='w-full h-full'>
+        <TabsList>
+          <TabsTrigger value='users'>Usuarios</TabsTrigger>
+          <TabsTrigger value='alerts'>Historial de Alertas</TabsTrigger>
+          <TabsTrigger value='contacts'>Contactos</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value='users'>
+          <Table
+            filters={[
+              {
+                column: 'status',
+                options: userStatuses,
+                title: 'Estatus',
+              },
+            ]}
+            searchColumn='name'
+            columns={columns}
+            data={users}
+            rowsPerPageLabel='Usuarios por página'
+          ></Table>
+        </TabsContent>
+
+        <TabsContent value='alerts'>
+          <EmptyPlaceholder className='h-full'>
+            <EmptyPlaceholder.Icon Icon={BellIcon} />
+            <EmptyPlaceholder.Title>Próximamente...</EmptyPlaceholder.Title>
+          </EmptyPlaceholder>
+        </TabsContent>
+
+        <TabsContent value='contacts' className='h-full'>
+          <EmptyPlaceholder className='h-full'>
+            <EmptyPlaceholder.Icon Icon={ContactIcon} />
+            <EmptyPlaceholder.Title>Próximamente...</EmptyPlaceholder.Title>
+          </EmptyPlaceholder>
+        </TabsContent>
+      </Tabs>
     </DashboardShell>
   )
 }
