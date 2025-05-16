@@ -1,4 +1,4 @@
-import type { DataResponse } from '../misc/types'
+import type { DataResponse, MsgResponse } from '../misc/types'
 
 /**
  * Model
@@ -10,6 +10,7 @@ export type User = {
   email: string
   status: UserStatus
   createdAt: Date
+  lastLogin: Date
 }
 
 /**
@@ -17,6 +18,7 @@ export type User = {
  */
 // export type GetUserResponse = DataResponse<User>
 export type GetUsersResponse = DataResponse<User[]>
+export type UpdateUserStatusResponse = MsgResponse
 // export type CreateUserResponse = DataMsgResponse<User>
 // export type UpdateUserResponse = DataMsgResponse<User>
 // export type DeleteUsersResponse = MsgResponse

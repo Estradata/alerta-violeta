@@ -8,6 +8,9 @@ import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 import { AlertCircleIcon, CheckCircle } from 'lucide-react'
 import { USER_STATUS_LABELS, userStatuses } from '@packages/users/consts'
+import { useDisclosure } from '@/hooks/use-disclosure'
+import { useUpdateUserStatus } from '@/features/users/api/update-user-status'
+import { ConfirmationDialog } from '@/components/confirmation-dialog'
 
 export const Route = createFileRoute('/app/users')({
   component: RouteComponent,
@@ -67,8 +70,7 @@ function RouteComponent() {
       ),
       cell: ({ row }) => {
         const user = row.original
-        // const newStatus = user.status === 'BLOCKED' ? 'ACTIVE' : 'BLOCKED'
-        return <UserStatusBadge status={user.status} />
+        return <UserStatusBadge id={user.id} status={user.status} />
       },
     },
     {
@@ -86,7 +88,7 @@ function RouteComponent() {
         <TableColumnHeader column={column} title='Último inicio de sesión' />
       ),
       cell: ({ row }) => {
-        return formatDate(new Date(row.original.createdAt))
+        return formatDate(new Date(row.original.lastLogin))
       },
     },
 
@@ -154,31 +156,60 @@ function RouteComponent() {
 }
 
 export function UserStatusBadge({
+  id,
   status,
-  onClick,
 }: {
+  id: string
   status: User['status']
-  onClick?: () => void
 }) {
-  return (
-    <span
-      role={onClick ? 'button' : undefined}
-      className={cn(
-        'px-2 py-1 inline-flex items-center text-xs leading-5 font-medium rounded-full',
-        onClick && 'cursor-pointer',
-        status === 'ACTIVE'
-          ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
-          : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
-      )}
-      onClick={onClick}
-    >
-      {status === 'ACTIVE' ? (
-        <CheckCircle className='w-3.5 h-3.5 mr-1' />
-      ) : (
-        <AlertCircleIcon className='w-3.5 h-3.5 mr-1' />
-      )}
+  const dialog = useDisclosure()
+  const updateMutation = useUpdateUserStatus({
+    onSuccess() {
+      dialog.onClose()
+    },
+  })
+  const newStatus = status === 'ACTIVE' ? 'BLOCKED' : 'ACTIVE'
 
-      {USER_STATUS_LABELS[status]}
-    </span>
+  function onClick() {
+    dialog.onOpen()
+  }
+
+  function onConfirm() {
+    updateMutation.mutate({
+      id,
+      status: newStatus,
+    })
+  }
+
+  return (
+    <>
+      <span
+        role='button'
+        className={cn(
+          'px-2 py-1 inline-flex items-center text-xs leading-5 font-medium rounded-full',
+          'cursor-pointer',
+          status === 'ACTIVE'
+            ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
+            : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'
+        )}
+        onClick={onClick}
+      >
+        {status === 'ACTIVE' ? (
+          <CheckCircle className='w-3.5 h-3.5 mr-1' />
+        ) : (
+          <AlertCircleIcon className='w-3.5 h-3.5 mr-1' />
+        )}
+
+        {USER_STATUS_LABELS[status]}
+      </span>
+
+      <ConfirmationDialog
+        title='Cambiar estatus'
+        variant='default'
+        text={`¿Está seguro de que desea cambiar el estatus a "${USER_STATUS_LABELS[newStatus]}"?`}
+        {...dialog}
+        onConfirm={onConfirm}
+      />
+    </>
   )
 }

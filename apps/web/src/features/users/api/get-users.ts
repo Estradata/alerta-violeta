@@ -9,7 +9,7 @@ export async function getUsers() {
 
 export function useUsers() {
   return useQuery({
-    queryKey: ['safe-points'],
+    queryKey: ['users'],
     queryFn: getUsers,
   })
 }

@@ -15,6 +15,7 @@ export const getUsers: RequestHandler = async (_, res, next) => {
           id: user.id,
           email: email,
           createdAt: user.createdAt,
+          lastLogin: user.lastLogin,
           name: user.name,
           status: user.status,
         }
