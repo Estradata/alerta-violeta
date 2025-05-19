@@ -1,15 +1,15 @@
 import type { Permission } from './types'
 import type { PermissionModule, PermissionAction } from './schema'
 
-type R = {
+type Group = {
   module: PermissionModule
-  actions: {
+  permissions: {
     id: string
     action: PermissionAction
   }[]
 }[]
 
-export function groupByModule(permissions: Permission[]): R {
+export function groupByModule(permissions: Permission[]): Group {
   const map = new Map<
     PermissionModule,
     { id: string; action: PermissionAction }[]
@@ -22,10 +22,10 @@ export function groupByModule(permissions: Permission[]): R {
     map.get(module)!.push({ id, action })
   })
 
-  const result: R = []
+  const result: Group = []
 
-  map.forEach((perms, module) => {
-    result.push({ module, actions: perms })
+  map.forEach((permissions, module) => {
+    result.push({ module, permissions })
   })
 
   return result

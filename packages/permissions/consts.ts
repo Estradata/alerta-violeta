@@ -14,3 +14,8 @@ export const MODULE_PERMISSIONS_LABELS: Record<PermissionModule, string> = {
   SAFE_POINTS: 'Puntos Violeta',
   USERS: 'Usuarios',
 }
+
+export const ACTION_PERMISSIONS_LABELS: Record<PermissionAction, string> = {
+  VIEW: 'Ver',
+  UPDATE: 'Ver y Actualizar',
+}

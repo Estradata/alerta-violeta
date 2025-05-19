@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import { MODULE_PERMISSIONS_MAP } from '@packages/auth-admin/consts'
+import { MODULE_PERMISSIONS_MAP } from '@packages/permissions/consts'
 import { Permission, PermissionAction, PermissionModule } from '@prisma/client'
 import { db } from '@/lib/db'
 import { PermissionId } from '@packages/permissions/schema'

@@ -18,12 +18,8 @@ const defaultValues: AdminData = {
   accountId: '',
   email: '',
   password: '',
-  customPermissions: [
-    {
-      action: 'view',
-      module: 'admin',
-    },
-  ],
+  roleId: 'NONE',
+  customPermissions: [],
 }
 
 export function CreateAdmin() {
