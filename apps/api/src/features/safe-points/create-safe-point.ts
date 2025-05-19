@@ -8,7 +8,10 @@ export const createSafePoint: RequestHandler = async (req, res, next) => {
     const data = safePointSchema.parse(req.body)
 
     const safePoint = await db.safePoint.create({
-      data,
+      data: {
+        ...data,
+        accountId: req.admin.accountId,
+      },
     })
 
     res.json({

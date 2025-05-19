@@ -10,7 +10,7 @@ export const updateSafePoint: RequestHandler<{ id: string }> = async (
 ) => {
   try {
     const id = req.params.id
-    const { accountId, ...data } = safePointSchema.parse(req.body)
+    const data = safePointSchema.parse(req.body)
     const safePoint = await db.safePoint.update({
       where: { id },
       data,

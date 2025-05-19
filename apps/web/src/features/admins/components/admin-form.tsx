@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { usePermissions } from '@/features/permissions/api/get-permissions'
 import type { AdminData } from '@packages/auth-admin/schema'
 import type { UseFormReturn } from 'react-hook-form'
+import { usePermissionsRoles } from '@/features/permissions/api/get-permissions-roles'
 import {
   MODULE_PERMISSIONS_LABELS,
   ACTION_PERMISSIONS_LABELS,
@@ -21,6 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { cn } from '@/lib/utils'
+import { ControlledSelect } from '@/components/form/controlled-select'
 
 type UIPermission = PermissionId | `${PermissionModule}.NONE`
 
@@ -37,10 +40,12 @@ export function AdminForm({
   type: 'create' | 'update'
   disabled?: boolean
 }) {
-  const result = usePermissions()
-  const permissions = result.data?.data || []
+  const permissions = usePermissions().data?.data || []
+  const roles = usePermissionsRoles().data?.data || []
   const groupedPermissions = groupByModule(permissions)
   const selectedPermissions = form.watch('customPermissions') as PermissionId[]
+  const selectedRole = form.watch('roleId')
+  const hasRoleSelected = selectedRole !== 'NONE'
 
   function onChangePermission(id: UIPermission, m: PermissionModule) {
     const filteredPermissions = selectedPermissions.filter(
@@ -52,6 +57,17 @@ export function AdminForm({
       : [...filteredPermissions, id]
 
     form.setValue('customPermissions', newPermissions)
+  }
+
+  function onRoleChange(roleId: string) {
+    form.setValue('roleId', roleId)
+
+    if (roleId === 'NONE') {
+      form.setValue('customPermissions', [])
+    } else {
+      const permissions = roles.find((r) => r.id)?.permissionIds || []
+      form.setValue('customPermissions', permissions)
+    }
   }
 
   function getModulePermission(m: PermissionModule) {
@@ -90,17 +106,40 @@ export function AdminForm({
         />
 
         <div>
-          <Label>Permisos</Label>
+          <ControlledSelect
+            control={form.control}
+            name='roleId'
+            label='Rol y Permisos'
+            // on={()}
+            onChange={onRoleChange}
+          >
+            <SelectItem value='NONE'>Personalizado</SelectItem>
+
+            {roles.map((role) => {
+              return (
+                <SelectItem key={role.id} value={role.id}>
+                  {role.name}
+                </SelectItem>
+              )
+            })}
+          </ControlledSelect>
 
           <div className='flex flex-col gap-4 pt-4'>
             {groupedPermissions.map((group) => {
               return (
                 <div className='flex items-center gap-5' key={group.module}>
-                  <Label className='flex-1' htmlFor={group.module}>
+                  <Label
+                    className={cn(
+                      'flex-1',
+                      hasRoleSelected && 'text-muted-foreground'
+                    )}
+                    htmlFor={group.module}
+                  >
                     {MODULE_PERMISSIONS_LABELS[group.module]}
                   </Label>
 
                   <Select
+                    disabled={hasRoleSelected}
                     name={group.module}
                     value={getModulePermission(group.module)}
                     onValueChange={(id) =>

@@ -12,7 +12,10 @@ export const createEmergencyContact: RequestHandler = async (
     const data = emergencyContactSchema.parse(req.body)
 
     const emergencyContact = await db.emergencyContact.create({
-      data,
+      data: {
+        ...data,
+        accountId: req.admin.accountId
+      },
     })
 
     res.json({

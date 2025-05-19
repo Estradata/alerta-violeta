@@ -44,16 +44,16 @@ function RouteComponent() {
         <TableColumnHeader column={column} title='Nombre' />
       ),
       cell: ({ row }) => {
-        const contact = row.original
+        const user = row.original
 
         return (
           <div className='flex items-center'>
             <div>
               <div className='text-sm font-medium text-gray-900 dark:text-white'>
-                {contact.name}
+                {user.name}
               </div>
               <div className='text-xs text-gray-500 dark:text-gray-400 max-w-xs truncate'>
-                {contact.email}
+                {user.email}
               </div>
             </div>
           </div>

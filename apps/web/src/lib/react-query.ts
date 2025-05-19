@@ -1,5 +1,6 @@
 import { toast } from 'sonner'
 import { QueryClient } from '@tanstack/react-query'
+import { AxiosError } from 'axios'
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -13,8 +14,10 @@ export const queryClient = new QueryClient({
 
 export type MutationConfig<T> = {
   onSuccess?: (data: T) => void
-  onServerError?: () => void
-  onValidationError?: () => void
+  onValidationError?: (errors: Record<string, string>) => void
+
+  // Not Implemented for now, implement when needed
+  // onServerError?: () => void
 }
 
 export function handleSuccess({
@@ -41,4 +44,21 @@ export function handleSuccess({
    * Invoke outside handler
    */
   onSuccess?.(result?.data)
+}
+
+export function handleError({
+  error,
+  onValidationError,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}: { error: Error } & MutationConfig<any>) {
+  if (error instanceof AxiosError && error.response?.data) {
+    const response = error.response.data as {
+      name?: string
+      data?: Record<string, string>
+    }
+
+    if (response.name === 'ValidationError' && response.data) {
+      onValidationError?.(response.data)
+    }
+  }
 }

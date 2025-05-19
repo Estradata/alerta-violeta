@@ -5,7 +5,6 @@ import { z } from 'zod'
  */
 export const safePointSchema = z.object({
   id: z.string().optional(),
-  accountId: z.string(),
 
   name: z.string(),
   address: z.string(),

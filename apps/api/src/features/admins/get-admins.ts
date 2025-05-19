@@ -1,0 +1,31 @@
+import { db } from '@/lib/db'
+import { RequestHandler } from 'express'
+import { GetAdminsResponse } from '@packages/admins/types'
+import { PermissionId } from '@packages/permissions/schema'
+
+export const getAdmins: RequestHandler = async (_, res, next) => {
+  try {
+    const admins = await db.admin.findMany({
+      include: {
+        customPermissions: {
+          select: {
+            id: true,
+          },
+        },
+      },
+    })
+
+    res.json({
+      data: admins.map((admin) => {
+        return {
+          id: admin.id,
+          email: admin.email,
+          name: admin.name,
+          permissions: admin.customPermissions.map(p => p.id as PermissionId)
+        }
+      }),
+    } satisfies GetAdminsResponse)
+  } catch (err) {
+    next(err)
+  }
+}

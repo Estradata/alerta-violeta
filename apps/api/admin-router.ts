@@ -4,7 +4,8 @@ import AlertsRouter from '@/features/alerts/router'
 import EmergencyContactsRouter from '@/features/emergency-contacts/router'
 import SafePointsRouter from '@/features/safe-points/router'
 import UsersRouter from '@/features/users/router'
-import permissionsRouter from '@/features/permissions/router'
+import PermissionsRouter from '@/features/permissions/router'
+import AdminsRouter from '@/features/admins/router'
 
 const adminRouter = express.Router()
 
@@ -14,6 +15,7 @@ adminRouter
   .use(`/emergency-contacts`, EmergencyContactsRouter)
   .use(`/alerts`, AlertsRouter)
   .use(`/users`, UsersRouter)
-  .use('/permissions', permissionsRouter)
+  .use('/permissions', PermissionsRouter)
+  .use('/admins', AdminsRouter)
 
 export default adminRouter

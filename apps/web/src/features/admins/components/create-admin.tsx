@@ -10,12 +10,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import { type AdminData, adminSchema } from '@packages/auth-admin/schema'
+import { type AdminData, adminSchema } from '@packages/admins/schema'
 import { AdminForm } from '@/features/admins/components/admin-form'
+import { useCreateAdmin } from '@/features/admins/api/create-admin'
+import { applyFormErrors } from '@/lib/react-hook-form'
 
 const defaultValues: AdminData = {
   name: '',
-  accountId: '',
   email: '',
   password: '',
   roleId: 'NONE',
@@ -24,13 +25,19 @@ const defaultValues: AdminData = {
 
 export function CreateAdmin() {
   const { open, onOpenChange } = useDisclosure()
+
   const form = useForm<AdminData>({
     resolver: zodResolver(adminSchema),
     defaultValues,
   })
+  const createMutation = useCreateAdmin({
+    onValidationError(errors) {
+      applyFormErrors(form.setError, errors)
+    },
+  })
 
   function onSubmit(data: AdminData) {
-    console.log(data)
+    createMutation.mutate(data)
   }
 
   return (
@@ -44,8 +51,7 @@ export function CreateAdmin() {
           <DialogTitle>Crear administrador</DialogTitle>
           <DialogDescription>
             Completa el formulario a continuación para crear un nuevo
-            administrador. Proporciona toda la información requerida y asegúrate
-            de que los datos ingresados sean correctos.
+            administrador.
           </DialogDescription>
         </DialogHeader>
 

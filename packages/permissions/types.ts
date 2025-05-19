@@ -7,4 +7,11 @@ export type Permission = {
   action: PermissionAction
 }
 
+export type AdminRole = {
+  id: string
+  name: string
+  permissionIds: PermissionId[]
+}
+
 export type GetPermissionsResponse = DataResponse<Permission[]>
+export type GetPermissionsRoles = DataResponse<AdminRole[]>

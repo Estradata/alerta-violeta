@@ -93,6 +93,7 @@ model Admin {
   accountId String  @map("account_id")
 
   email    String @unique
+  name     String
   password String
 
   // A defined role, with pre-defined permissions
@@ -125,11 +126,12 @@ enum PermissionModule {
 enum PermissionAction {
   VIEW
   UPDATE
-	@@map("Action")
+
+  @@map("Action")
 }
 
 model Permission {
-  id     String @id
+  id     String           @id
   module PermissionModule
   action PermissionAction
 
