@@ -13,11 +13,9 @@ import {
 } from '@packages/emergency-contacts/schema'
 import { EmergencyContactForm } from '@/features/emergency-contacts/components/emergency-contact-form'
 import { useUiStore } from '@/features/emergency-contacts/store/ui'
-import { useAuth } from '@/auth'
 import { useUpdateEmergencyContact } from '@/features/emergency-contacts/api/update-emergency-contact'
 
 export function UpdateEmergencyContact() {
-  const user = useAuth().user!
   const data = useUiStore((s) => s.updateDialog.data)
   const open = useUiStore((s) => s.updateDialog.open)
   const onClose = useUiStore((s) => s.closeUpdateDialog)
@@ -25,7 +23,6 @@ export function UpdateEmergencyContact() {
     resolver: zodResolver(emergencyContactSchema),
     values: {
       id: data?.id || '',
-      accountId: user.accountId,
       name: data?.name || '',
       description: data?.description || '',
       phone: data?.phone || '',
@@ -39,10 +36,7 @@ export function UpdateEmergencyContact() {
   })
 
   function onSubmit(data: EmergencyContactData) {
-    updateMutation.mutate({
-      ...data,
-      accountId: user.accountId,
-    })
+    updateMutation.mutate(data)
   }
 
   return (

@@ -13,11 +13,9 @@ import {
 } from '@packages/safe-points/schema'
 import { SafePointForm } from '@/features/safe-points/components/safe-point-form'
 import { useUiStore } from '@/features/safe-points/store/ui'
-import { useAuth } from '@/auth'
 import { useUpdateSafePoint } from '@/features/safe-points/api/update-safe-point'
 
 export function UpdateSafePoint() {
-  const user = useAuth().user!
   const data = useUiStore((s) => s.updateDialog.data)
   const open = useUiStore((s) => s.updateDialog.open)
   const onClose = useUiStore((s) => s.closeUpdateDialog)
@@ -25,7 +23,6 @@ export function UpdateSafePoint() {
     resolver: zodResolver(safePointSchema),
     values: {
       id: data?.id || '',
-      accountId: user.accountId,
       name: data?.name || '',
       googlePlaceId: data?.googlePlaceId || null,
       address: data?.address || '',
@@ -42,10 +39,7 @@ export function UpdateSafePoint() {
   })
 
   function onSubmit(data: SafePointData) {
-    updateMutation.mutate({
-      ...data,
-      accountId: user.accountId,
-    })
+    updateMutation.mutate(data)
   }
 
   return (

@@ -6,6 +6,7 @@ export type Admin = {
   name: string
   email: string
   permissions: PermissionId[]
+  roleId: string | null
 }
 
 export type GetAdminsResponse = DataResponse<Admin[]>

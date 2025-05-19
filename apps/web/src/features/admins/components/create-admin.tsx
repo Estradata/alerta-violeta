@@ -62,7 +62,7 @@ export function CreateAdmin() {
           onSubmit={onSubmit}
           form={form}
           type='create'
-          isLoading={false}
+          isLoading={createMutation.isPending}
         />
       </DialogContent>
     </Dialog>

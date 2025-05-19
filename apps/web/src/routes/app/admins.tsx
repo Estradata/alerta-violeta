@@ -1,10 +1,17 @@
 import { DashboardShell } from '@/components/dashboard-shell'
-import { Table, TableColumnHeader } from '@/components/data-table'
+import {
+  Table,
+  TableColumnHeader,
+  TableRowActions,
+} from '@/components/data-table'
 import { selectColumn } from '@/components/data-table/utils/select-column'
 import { useAdmins } from '@/features/admins/api/get-admins'
 import { CreateAdmin } from '@/features/admins/components/create-admin'
+import { UpdateAdmin } from '@/features/admins/components/update-admin'
+import { useUiStore } from '@/features/admins/store/ui'
 import { createFileRoute } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
+import { EditIcon, TrashIcon } from 'lucide-react'
 
 export const Route = createFileRoute('/app/admins')({
   component: RouteComponent,
@@ -13,6 +20,8 @@ export const Route = createFileRoute('/app/admins')({
 function RouteComponent() {
   const result = useAdmins()
   const admins = result.data?.data || []
+  const openUpdateDialog = useUiStore((s) => s.openUpdateDialog)
+  const openDeleteDialog = useUiStore((s) => s.openDeleteDialog)
 
   const columns: ColumnDef<(typeof admins)[number]>[] = [
     selectColumn(),
@@ -48,45 +57,45 @@ function RouteComponent() {
         )
       },
     },
-    // {
-    //   id: 'actions',
-    //   header: ({ column }) => (
-    //     <TableColumnHeader column={column} title='Opciones' />
-    //   ),
-    //   cell: ({ row }) => {
-    //     return (
-    //       <TableRowActions
-    //         actions={[
-    //           {
-    //             asChild: true,
-    //             render: (
-    //               <button
-    //                 className='flex justify-start gap-2 items-center cursor-pointer w-full'
-    //                 onClick={() => openUpdateDialog(row.original)}
-    //               >
-    //                 <EditIcon />
-    //                 <span>Actualizar</span>
-    //               </button>
-    //             ),
-    //           },
-    //           {
-    //             asChild: true,
-    //             render: (
-    //               <button
-    //                 className='flex justify-start gap-2 items-center cursor-pointer w-full'
-    //                 onClick={() => openDeleteDialog([row.original])}
-    //               >
-    //                 <TrashIcon />
+    {
+      id: 'actions',
+      header: ({ column }) => (
+        <TableColumnHeader column={column} title='Opciones' />
+      ),
+      cell: ({ row }) => {
+        return (
+          <TableRowActions
+            actions={[
+              {
+                asChild: true,
+                render: (
+                  <button
+                    className='flex justify-start gap-2 items-center cursor-pointer w-full'
+                    onClick={() => openUpdateDialog(row.original)}
+                  >
+                    <EditIcon />
+                    <span>Actualizar</span>
+                  </button>
+                ),
+              },
+              {
+                asChild: true,
+                render: (
+                  <button
+                    className='flex justify-start gap-2 items-center cursor-pointer w-full'
+                    onClick={() => openDeleteDialog([row.original])}
+                  >
+                    <TrashIcon />
 
-    //                 <span>Eliminar</span>
-    //               </button>
-    //             ),
-    //           },
-    //         ]}
-    //       />
-    //     )
-    //   },
-    // },
+                    <span>Eliminar</span>
+                  </button>
+                ),
+              },
+            ]}
+          />
+        )
+      },
+    },
   ]
 
   return (
@@ -100,6 +109,7 @@ function RouteComponent() {
         rowsPerPageLabel='Administradores por página'
       >
         <CreateAdmin />
+        <UpdateAdmin />
       </Table>
     </DashboardShell>
   )

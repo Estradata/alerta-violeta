@@ -21,6 +21,7 @@ export const getAdmins: RequestHandler = async (_, res, next) => {
           id: admin.id,
           email: admin.email,
           name: admin.name,
+          roleId: admin.roleId,
           permissions: admin.customPermissions.map(p => p.id as PermissionId)
         }
       }),
