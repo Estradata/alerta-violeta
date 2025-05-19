@@ -1,13 +1,13 @@
-// import { db } from '@/lib/db'
 import { ValidationError } from '@packages/errors'
-// import { encodeUserToken } from '@/lib/jwt'
-// import { hash } from '@/utils/hash'
 import { adminSchema } from '@packages/admins/schema'
-// import { LoginResponse } from '@packages/auth-admin/types'
 import { RequestHandler } from 'express'
 import { checkIsAdminEmailAvailable } from '@/features/admins/utils'
+import { db } from '@/lib/db'
+import { hash } from '@/utils/hash'
+import { AdminRole } from '@prisma/client'
+import { CreateAdminResponse } from '@packages/admins/types'
 
-export const createAdmin: RequestHandler = async (req, _, next) => {
+export const createAdmin: RequestHandler = async (req, res, next) => {
   try {
     const data = adminSchema.parse(req.body)
 
@@ -15,52 +15,53 @@ export const createAdmin: RequestHandler = async (req, _, next) => {
      * Check email available
      */
     const available = await checkIsAdminEmailAvailable(data.email)
-    console.log(available)
-    if (true)
+    if (!available)
       throw new ValidationError({
         email: 'Este correo no está disponible',
       })
 
-    // /**
-    //  * Check account
-    //  */
-    // const account = await db.account.findUnique({
-    //   where: { id: req.admin.accountId },
-    // })
+    /**
+     * Check account
+     */
+    const account = await db.account.findUnique({
+      where: { id: req.admin.accountId },
+    })
 
-    // if (!account)
-    //   throw new ValidationError({
-    //     accountId: 'La cuenta no existe',
-    //   })
+    if (!account)
+      throw new ValidationError({
+        accountId: 'La cuenta no existe',
+      })
 
-    // /**
-    //  * Create user
-    //  */
-    // const hashedPassword = await hash(data.password)
-    // const { password, ...admin } = await db.admin.create({
-    //   data: {
-    //     // ...data,
-    //     email: data.email,
-    //     name: data.name,
-    //     accountId: account.id,
-    //     password: hashedPassword,
-    //   },
-    // })
+    /**
+     * Create admin
+     */
+    const hashedPassword = await hash(data.password)
+    const hasRoleSelected = data.roleId && data.roleId !== 'NONE'
+    let role: AdminRole | null = null
+    let customPermissions: Array<{ id: string }> = []
 
-    // const userForToken = {
-    //   id: admin.id,
-    //   email: admin.email,
-    // }
+    if (hasRoleSelected) {
+      role = await db.adminRole.findUnique({ where: { id: data.roleId! } })
+    } else if (data.customPermissions.length) {
+      customPermissions = data.customPermissions.map((id) => ({ id }))
+    }
 
-    // const token = encodeUserToken(userForToken)
+    await db.admin.create({
+      data: {
+        email: data.email,
+        name: data.name,
+        accountId: account.id,
+        password: hashedPassword,
+        roleId: role?.id,
+        customPermissions: {
+          connect: customPermissions,
+        },
+      },
+    })
 
-    // res.json({
-    //   message: 'User registration successful',
-    //   data: {
-    //     user: admin,
-    //     token,
-    //   },
-    // } satisfies LoginResponse)
+    res.json({
+      message: 'Administrador creado correctamente',
+    } as CreateAdminResponse)
   } catch (err) {
     next(err)
   }

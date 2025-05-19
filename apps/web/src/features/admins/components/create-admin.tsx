@@ -24,13 +24,16 @@ const defaultValues: AdminData = {
 }
 
 export function CreateAdmin() {
-  const { open, onOpenChange } = useDisclosure()
-
+  const { open, onOpenChange, onClose } = useDisclosure()
   const form = useForm<AdminData>({
     resolver: zodResolver(adminSchema),
     defaultValues,
   })
   const createMutation = useCreateAdmin({
+    onSuccess() {
+      onClose()
+      form.reset({ ...defaultValues })
+    },
     onValidationError(errors) {
       applyFormErrors(form.setError, errors)
     },

@@ -4,7 +4,7 @@ import { Form } from '@/components/ui/form'
 import { groupByModule } from '@packages/permissions/utils'
 import { Label } from '@/components/ui/label'
 import { usePermissions } from '@/features/permissions/api/get-permissions'
-import type { AdminData } from '@packages/auth-admin/schema'
+import type { AdminData } from '@packages/admins/schema'
 import type { UseFormReturn } from 'react-hook-form'
 import { usePermissionsRoles } from '@/features/permissions/api/get-permissions-roles'
 import {
@@ -101,6 +101,7 @@ export function AdminForm({
         <ControlledInput
           control={form.control}
           name='password'
+          type='password'
           label='Contraseña'
           required
         />
