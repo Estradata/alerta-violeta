@@ -30,10 +30,13 @@ export default function LoginForm() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { dirtyFields, isValid, errors },
   } = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
+    mode: "onChange",
   });
+
+  const allFieldsDirty = dirtyFields.email && dirtyFields.password;
 
   const { mutate, isPending } = useLogin();
   const { login } = useAuth();
@@ -151,7 +154,7 @@ export default function LoginForm() {
           {/* Forgot Pass Link */}
           {/* TODO: Call the API to initialize the Password recovery */}
           <Pressable onPress={() => console.log("Navigate to forgot password")}>
-            <Text className="text-blue-600">Olvide mi contrasena</Text>
+            <Text className="text-primary-600">Olvide mi contrasena</Text>
           </Pressable>
         </VStack>
 
@@ -159,7 +162,7 @@ export default function LoginForm() {
         <Button
           className="ml-auto"
           onPress={handleSubmit(onSubmit)}
-          isDisabled={isPending}
+          isDisabled={!allFieldsDirty || !isValid || isPending}
         >
           {isPending ? (
             <Spinner size="small" />
