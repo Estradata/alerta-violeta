@@ -18,9 +18,9 @@ import { EyeIcon, EyeOffIcon } from "@/components/ui/icon";
 
 import React from "react";
 import { loginSchema, LoginSchema } from "@/lib/zodSchemas";
-import { useLogin } from "../hooks/useLogin";
+import { useSignup } from "../hooks/useSignup";
 import { useAuth } from "@/context/AuthContext";
-import { Alert, Pressable } from "react-native";
+import { Alert } from "react-native";
 import { Spinner } from "@/components/ui/spinner";
 import { Link } from "expo-router";
 import { Text } from "@/components/ui/text";
@@ -35,7 +35,7 @@ export default function LoginForm() {
     resolver: zodResolver(loginSchema),
   });
 
-  const { mutate, isPending } = useLogin();
+  const { mutate, isPending } = useSignup();
   const { login } = useAuth();
 
   const onSubmit = (data: LoginSchema) => {
@@ -148,11 +148,6 @@ export default function LoginForm() {
               </>
             )}
           />
-          {/* Forgot Pass Link */}
-          {/* TODO: Call the API to initialize the Password recovery */}
-          <Pressable onPress={() => console.log("Navigate to forgot password")}>
-            <Text className="text-blue-600">Olvide mi contrasena</Text>
-          </Pressable>
         </VStack>
 
         {/* Submit Button */}
@@ -164,17 +159,15 @@ export default function LoginForm() {
           {isPending ? (
             <Spinner size="small" />
           ) : (
-            <ButtonText className="text-typography-0">
-              Iniciar sesion
-            </ButtonText>
+            <ButtonText className="text-typography-0">Registrarse</ButtonText>
           )}
         </Button>
 
         {/* SignUp Button */}
         <VStack className="flex flex-row">
-          <Text className="text-blue-600">Si aun no tienes cuenta </Text>
-          <Link href="/(auth)/signup" className="text-blue-600 underline">
-            registrate
+          <Text className="text-blue-600">Si ya tienes cuenta </Text>
+          <Link href="/(auth)" className="text-blue-600 underline">
+            Iniciar sesion
           </Link>
         </VStack>
       </VStack>
