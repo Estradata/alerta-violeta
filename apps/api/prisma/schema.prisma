@@ -96,7 +96,7 @@ model Admin {
   password String
 
   // A defined role, with pre-defined permissions
-  role              AdminRole?   @relation(fields: [roleId], references: [id])
+  role              AdminRole?   @relation(fields: [roleId], references: [id], onDelete: SetNull)
   roleId            String?
   // OR a list of custom permissions
   customPermissions Permission[]
@@ -107,7 +107,7 @@ model Admin {
 }
 
 model AdminRole {
-  id   String @id @default(uuid())
+  id   String @id
   name String @unique
 
   permissions Permission[]
@@ -116,10 +116,22 @@ model AdminRole {
   @@map("admin_roles")
 }
 
+enum PermissionModule {
+  ADMINS
+  USERS
+  SAFE_POINTS
+}
+
+enum PermissionAction {
+  VIEW
+  UPDATE
+	@@map("Action")
+}
+
 model Permission {
-  id     String @id @default(uuid())
-  module String
-  action String
+  id     String @id
+  module PermissionModule
+  action PermissionAction
 
   roles AdminRole[]
   users Admin[]

@@ -9,6 +9,7 @@ import express from 'express'
 import cors from 'cors'
 import { AuthUser } from '@packages/auth/types'
 import { AuthAdminUser } from '@packages/auth-admin/types'
+import { seedDB } from './seed'
 
 const app = express()
 
@@ -32,6 +33,7 @@ function main() {
   app.get('/', (_, res) => res.json({ ok: true }))
 
   // No Auth Needed
+  app.get('/api/seed', seedDB)
   app.use(`${APP_API}/auth`, AppAuthRouter)
   app.use(`${ADMIN_API}/auth`, AdminAuthRouter)
 

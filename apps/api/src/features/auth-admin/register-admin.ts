@@ -2,14 +2,14 @@ import { db } from '@/lib/db'
 import { ValidationError } from '@packages/errors'
 import { encodeUserToken } from '@/lib/jwt'
 import { hash } from '@/utils/hash'
-import { registrationSchema } from '@packages/auth-admin/schema'
+import { adminSchema } from '@packages/auth-admin/schema'
 import { LoginResponse } from '@packages/auth-admin/types'
 import { RequestHandler } from 'express'
 import { checkIsAdminEmailAvailable } from '@/features/auth-admin/utils'
 
 export const registerAdmin: RequestHandler = async (req, res, next) => {
   try {
-    const data = registrationSchema.parse(req.body)
+    const data = adminSchema.parse(req.body)
 
     /**
      * Check email available
@@ -38,7 +38,9 @@ export const registerAdmin: RequestHandler = async (req, res, next) => {
     const hashedPassword = await hash(data.password)
     const { password, ...admin } = await db.admin.create({
       data: {
-        ...data,
+        // ...data,
+        email: data.email,
+        accountId: account.id,
         password: hashedPassword,
       },
     })
