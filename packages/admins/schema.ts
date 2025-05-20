@@ -7,7 +7,7 @@ import { z } from 'zod'
 export const adminSchema = z
   .object({
     id: z.string().optional().nullable(),
-    name: z.string(),
+    name: z.string().min(2, 'Ingresa mínimo 2 caracteres'),
     email: z.string().email('Ingresa un correo válido'),
     changePassword: z.boolean().optional().nullable(),
     password: z.string(),
@@ -19,10 +19,10 @@ export const adminSchema = z
     customPermissions: z.array(PermissionIdSchema),
   })
   .superRefine(({ confirmPassword, password, changePassword }, ctx) => {
-    if (changePassword && password.length < 6) {
+    if (changePassword && password.length < 8) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Ingresa mínimo 6 caracteres',
+        message: 'Ingresa mínimo 8 caracteres',
         path: ['password'],
       })
     }
@@ -30,7 +30,7 @@ export const adminSchema = z
     if (changePassword && confirmPassword.length < 6) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Ingresa mínimo 6 caracteres',
+        message: 'Ingresa mínimo 8 caracteres',
         path: ['confirmPassword'],
       })
     }

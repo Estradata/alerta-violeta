@@ -21,6 +21,11 @@ export const seedDB: RequestHandler = async (_, res) => {
     })
   })
 
+  // Superadmin: Full system control (users, alerts, markers, settings).
+  // Monitoring Operator: Only view map safety locations and reports.
+  // Marker Editor: Full access to manage safety locations (Including bulk import/export).
+  // Alert Tracker: Full Access to follow up on alerts.
+
   try {
     await db.permission.createMany({
       data,

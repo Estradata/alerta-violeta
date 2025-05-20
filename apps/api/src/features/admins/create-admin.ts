@@ -9,6 +9,7 @@ import { db } from '@/lib/db'
 import { hash } from '@/utils/hash'
 import { CreateAdminResponse } from '@packages/admins/types'
 import { ensureAuth } from '@/utils/ensure-auth'
+import { createActivityLog } from '@/utils/create-activity-log'
 
 export const createAdmin: RequestHandler = async (req, res, next) => {
   try {
@@ -57,6 +58,13 @@ export const createAdmin: RequestHandler = async (req, res, next) => {
           connect: customPermissions,
         },
       },
+    })
+
+    await createActivityLog({
+      module: 'ADMINS',
+      action: 'CREATE',
+      adminId: req.admin.id,
+      description: `${req.admin.email} creó al administrador ${data.email}`,
     })
 
     res.json({

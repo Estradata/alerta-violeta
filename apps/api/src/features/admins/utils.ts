@@ -1,6 +1,10 @@
 import { db } from '@/lib/db'
 import type { Permission } from '@packages/admin-permissions/types'
-import { Admin, type Permission as PermissionDB } from '@prisma/client'
+import {
+  Admin,
+  AdminRole,
+  type Permission as PermissionDB,
+} from '@prisma/client'
 
 export async function checkIsAdminEmailTaken(
   email: string
@@ -22,21 +26,19 @@ export async function getRoleAndPermissions(data: {
   customPermissions: string[]
 }): Promise<{
   roleId: string | null
+  role: AdminRole | null
   customPermissions: Array<{ id: string }>
 }> {
-  const hasRoleSelected = data.roleId && data.roleId !== 'NONE'
-  let roleId: string | null = null
+  let role: AdminRole | null = null
   let customPermissions: Array<{ id: string }> = []
 
-  if (hasRoleSelected) {
-    const role = await db.adminRole.findUnique({ where: { id: data.roleId! } })
-    roleId = role?.id || null
+  if (data.roleId && data.roleId !== 'NONE') {
+    role = await db.adminRole.findUnique({ where: { id: data.roleId } })
   } else if (data.customPermissions.length) {
     customPermissions = data.customPermissions.map((id) => ({ id }))
-    roleId = null
   }
 
-  return { roleId, customPermissions }
+  return { roleId: role?.id || null, role, customPermissions }
 }
 
 /**

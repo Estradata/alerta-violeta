@@ -3,11 +3,17 @@ import {
   getRoleAndPermissions,
 } from '@/features/admins/utils'
 import { db } from '@/lib/db'
+import { createActivityLog } from '@/utils/create-activity-log'
 import { ensureAuth } from '@/utils/ensure-auth'
 import { hash } from '@/utils/hash'
+import {
+  ACTION_PERMISSIONS_LABELS,
+  MODULE_PERMISSIONS_LABELS,
+} from '@packages/admin-permissions/consts'
 import { adminSchema } from '@packages/admins/schema'
 import { UpdateAdminResponse } from '@packages/admins/types'
 import { ValidationError } from '@packages/errors'
+import { AdminRole } from '@prisma/client'
 import { RequestHandler } from 'express'
 
 export const updateAdmin: RequestHandler<{ id: string }> = async (
@@ -46,7 +52,8 @@ export const updateAdmin: RequestHandler<{ id: string }> = async (
     /**
      * Calculate new role or permissions
      */
-    const { roleId, customPermissions } = await getRoleAndPermissions(data)
+    const { roleId, role, customPermissions } =
+      await getRoleAndPermissions(data)
 
     /**
      * Update admin (change password if selected)
@@ -69,10 +76,52 @@ export const updateAdmin: RequestHandler<{ id: string }> = async (
       },
     })
 
+    const description = await getUpdateDescription(
+      req.admin.email,
+      data.email,
+      role,
+      customPermissions
+    )
+
+    await createActivityLog({
+      module: 'ADMINS',
+      action: 'UPDATE',
+      adminId: req.admin.id,
+      description: description,
+    })
+
     res.json({
       message: 'Administrador actualizado correctamente',
     } as UpdateAdminResponse)
   } catch (err) {
     next(err)
   }
+}
+
+async function getUpdateDescription(
+  adminEmail: string,
+  updatedEmail: string,
+  role: AdminRole | null,
+  customPermissions: { id: string }[]
+) {
+  let description = `${adminEmail} actualizó los permisos del administrador ${updatedEmail}: `
+
+  if (role) {
+    description += `Rol: ${role.name}`
+  } else {
+    const items = await db.permission.findMany({
+      where: { id: { in: customPermissions.map((p) => p.id) } },
+    })
+
+    const fragments: string[] = []
+    for (const item of items) {
+      fragments.push(
+        `${MODULE_PERMISSIONS_LABELS[item.module]}: ${ACTION_PERMISSIONS_LABELS[item.action]}`
+      )
+    }
+
+    description += fragments.join(', ')
+  }
+
+  return description
 }
