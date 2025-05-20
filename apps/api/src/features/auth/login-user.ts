@@ -33,6 +33,16 @@ export const loginUser: RequestHandler = async (req, res, next) => {
 
     const token = encodeUserToken(userForToken)
 
+    /**
+     * Update last login
+     */
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        lastLogin: new Date(),
+      },
+    })
+
     res.status(201).json({
       message: 'Login successful',
       data: {

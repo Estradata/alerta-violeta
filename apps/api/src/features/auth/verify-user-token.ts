@@ -30,6 +30,17 @@ export const verifyUserToken: RequestHandler = async (req, res, next) => {
     })
 
     if (!user) throw new TokenError()
+
+    /**
+     * Update last login
+     */
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        lastLogin: new Date(),
+      },
+    })
+
     if (user.status === 'BLOCKED')
       throw new UnauthorizedError('Esta cuenta se encuentra bloqueada')
 
