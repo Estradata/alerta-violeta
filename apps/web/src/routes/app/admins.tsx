@@ -1,12 +1,14 @@
+import { useAuth } from '@/auth'
 import { DashboardShell } from '@/components/dashboard-shell'
 import {
   Table,
   TableColumnHeader,
   TableRowActions,
 } from '@/components/data-table'
-import { selectColumn } from '@/components/data-table/utils/select-column'
+import { Checkbox } from '@/components/ui/checkbox'
 import { useAdmins } from '@/features/admins/api/get-admins'
 import { CreateAdmin } from '@/features/admins/components/create-admin'
+import { DeleteAdmins } from '@/features/admins/components/delete-admins'
 import { UpdateAdmin } from '@/features/admins/components/update-admin'
 import { useUiStore } from '@/features/admins/store/ui'
 import { createFileRoute } from '@tanstack/react-router'
@@ -18,13 +20,41 @@ export const Route = createFileRoute('/app/admins')({
 })
 
 function RouteComponent() {
+  const user = useAuth().user!
   const result = useAdmins()
   const admins = result.data?.data || []
   const openUpdateDialog = useUiStore((s) => s.openUpdateDialog)
   const openDeleteDialog = useUiStore((s) => s.openDeleteDialog)
+  // Every admin except the current user
+  const filteredAdmins = admins.filter((a) => a.id !== user.id)
 
   const columns: ColumnDef<(typeof admins)[number]>[] = [
-    selectColumn(),
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          disabled={!filteredAdmins.length}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label='Seleccionar todo'
+          className='translate-y-[2px] cursor-pointer'
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected() && row.original.id !== user.id}
+          disabled={row.original.id === user.id}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label='Seleccionar fila'
+          className='translate-y-[2px] cursor-pointer'
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
     {
       id: 'name',
       header: ({ column }) => (
@@ -105,11 +135,18 @@ function RouteComponent() {
     >
       <Table
         columns={columns}
+        enableMultiDelete={Boolean(filteredAdmins.length)}
         data={admins}
+        onMultiDelete={() => {
+          if (filteredAdmins.length) {
+            openDeleteDialog(filteredAdmins)
+          }
+        }}
         rowsPerPageLabel='Administradores por página'
       >
         <CreateAdmin />
         <UpdateAdmin />
+        <DeleteAdmins />
       </Table>
     </DashboardShell>
   )

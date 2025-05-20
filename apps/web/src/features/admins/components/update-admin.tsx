@@ -10,6 +10,8 @@ import {
 import { type AdminData, adminSchema } from '@packages/admins/schema'
 import { AdminForm } from '@/features/admins/components/admin-form'
 import { useUiStore } from '@/features/admins/store/ui'
+import { useUpdateAdmin } from '@/features/admins/api/update-admin'
+import { applyFormErrors } from '@/lib/react-hook-form'
 
 export function UpdateAdmin() {
   const data = useUiStore((s) => s.updateDialog.data)
@@ -21,23 +23,24 @@ export function UpdateAdmin() {
       customPermissions: data?.permissions || [],
       email: data?.email || '',
       name: data?.name || '',
+      changePassword: false,
       password: '',
+      confirmPassword: '',
       roleId: data?.roleId || 'NONE',
     },
   })
 
-  // const createMutation = useCreateAdmin({
-  //   onSuccess() {
-  //     onClose()
-  //   },
-  //   onValidationError(errors) {
-  //     applyFormErrors(form.setError, errors)
-  //   },
-  // })
+  const updateMutation = useUpdateAdmin({
+    onSuccess() {
+      onClose()
+    },
+    onValidationError(errors) {
+      applyFormErrors(form.setError, errors)
+    },
+  })
 
   function onSubmit(data: AdminData) {
-    // createMutation.mutate(data)
-    console.log(data)
+    updateMutation.mutate(data)
   }
 
   return (

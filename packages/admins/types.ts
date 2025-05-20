@@ -10,4 +10,6 @@ export type Admin = {
 }
 
 export type GetAdminsResponse = DataResponse<Admin[]>
+export type UpdateAdminResponse = MsgResponse
 export type CreateAdminResponse = MsgResponse
+export type DeleteAdminsResponse = MsgResponse

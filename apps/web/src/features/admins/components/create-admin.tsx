@@ -18,7 +18,9 @@ import { applyFormErrors } from '@/lib/react-hook-form'
 const defaultValues: AdminData = {
   name: '',
   email: '',
+  changePassword: true,
   password: '',
+  confirmPassword: '',
   roleId: 'NONE',
   customPermissions: [],
 }

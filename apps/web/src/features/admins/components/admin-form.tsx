@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { ControlledSelect } from '@/components/form/controlled-select'
+import { ControlledCheckbox } from '@/components/form/controlled-checkbox'
 
 type UIPermission = PermissionId | `${PermissionModule}.NONE`
 
@@ -46,6 +47,7 @@ export function AdminForm({
   const selectedPermissions = form.watch('customPermissions') as PermissionId[]
   const selectedRole = form.watch('roleId')
   const hasRoleSelected = selectedRole !== 'NONE'
+  const changePassword = form.getValues('changePassword')
 
   function onChangePermission(id: UIPermission, m: PermissionModule) {
     const filteredPermissions = selectedPermissions.filter(
@@ -98,11 +100,36 @@ export function AdminForm({
           required
         />
 
+        {type === 'update' && (
+          <ControlledCheckbox
+            control={form.control}
+            name='changePassword'
+            label='Actualizar contraseña'
+          />
+        )}
+
         <ControlledInput
           control={form.control}
+          disabled={type === 'update' && !changePassword}
           name='password'
           type='password'
           label='Contraseña'
+          required
+          inputProps={{
+            autoComplete: 'off',
+          }}
+        />
+
+        <ControlledInput
+          control={form.control}
+          disabled={type === 'update' && !changePassword}
+          name='confirmPassword'
+          label='Confirma la contraseña'
+          placeholder='Escribe aquí la contraseña'
+          type='password'
+          inputProps={{
+            autoComplete: 'off',
+          }}
           required
         />
 

@@ -1,13 +1,13 @@
 import { RequestHandler } from 'express'
 import { db } from '@/lib/db'
-import { DeleteSafePointsResponse } from '@packages/safe-points/types'
+import { DeleteAdminsResponse } from '@packages/admins/types'
 import { deleteSchema } from '@packages/misc/schema'
 
-export const deleteSafePoints: RequestHandler = async (req, res, next) => {
+export const deleteAdmins: RequestHandler = async (req, res, next) => {
   try {
     const ids = deleteSchema.parse(req.body)
 
-    await db.safePoint.deleteMany({
+    await db.admin.deleteMany({
       where: {
         id: {
           in: ids,
@@ -16,8 +16,8 @@ export const deleteSafePoints: RequestHandler = async (req, res, next) => {
     })
 
     res.status(200).json({
-      message: 'Punto(s) eliminado(s)',
-    } satisfies DeleteSafePointsResponse)
+      message: 'Admin(s) eliminado(s)',
+    } satisfies DeleteAdminsResponse)
   } catch (err) {
     next(err)
   }
