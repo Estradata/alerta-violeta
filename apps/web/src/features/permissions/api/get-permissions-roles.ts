@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { axios } from '@/lib/axios'
-import type { GetPermissionsRoles } from '@packages/permissions/types'
+import type { GetPermissionsRoles } from '@packages/admin-permissions/types'
 
 export async function getPermissionsRoles() {
   const result = await axios.get<GetPermissionsRoles>('/permissions/roles')

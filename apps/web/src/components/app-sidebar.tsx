@@ -1,18 +1,8 @@
 'use client'
 
 import * as React from 'react'
-import {
-  type LucideProps,
-  ChevronRight,
-  ActivityIcon,
-  ShieldIcon,
-  MapPinIcon,
-  UsersIcon,
-  XIcon,
-} from 'lucide-react'
-
+import { type LucideProps, ChevronRight } from 'lucide-react'
 import { NavUser } from '@/components/nav-user'
-// import { BranchSwitcher } from '@/components/branch-switcher'
 import {
   Sidebar,
   SidebarContent,
@@ -35,56 +25,41 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import type { AuthUser } from '@packages/auth/types'
+import type { AuthAdminUser } from '@packages/auth-admin/types'
 import { Link, type FileRoutesByPath } from '@tanstack/react-router'
+import type { PermissionModule } from '@packages/admin-permissions/schema'
+import { navItems } from '@/consts/navigation-items'
 
-type Item = {
+export type NavItem = {
   title: string
   icon?: React.ForwardRefExoticComponent<
     Omit<LucideProps, 'ref'> & React.RefAttributes<SVGSVGElement>
   >
-  url: keyof FileRoutesByPath
-  items?: Item[]
+  path: keyof FileRoutesByPath
+  items?: NavItem[]
+  module?: PermissionModule | null
 }
 
-const items: Item[] = [
-  {
-    title: 'Administradores',
-    url: '/app/admins',
-    icon: UsersIcon,
-  },
-  {
-    title: 'Usuarios',
-    url: '/app/users',
-    icon: UsersIcon,
-  },
-  {
-    title: 'Puntos Violeta',
-    url: '/app/safe-points',
-    icon: MapPinIcon,
-  },
-  {
-    title: '',
-    url: '/app/safe-points',
-    icon: XIcon,
-  },
-  {
-    title: 'Monitoreo',
-    url: '/app/monitoring',
-    icon: ActivityIcon,
-  },
-  {
-    title: 'Directorio de Seguridad',
-    url: '/app/emergency-contacts',
-    icon: ShieldIcon,
-  },
-]
+function filterItems(items: NavItem[], user: AuthAdminUser): NavItem[] {
+  const filteredItems: NavItem[] = []
 
-export function AppSidebar({ user }: { user: AuthUser }) {
+  for (const item of items) {
+    if (!item.module) filteredItems.push(item)
+
+    if (user.permissions.some((p) => p.module === item.module)) {
+      filteredItems.push(item)
+    }
+  }
+
+  return filteredItems
+}
+
+export function AppSidebar({ user }: { user: AuthAdminUser }) {
+  const filteredItems: NavItem[] = filterItems(navItems, user)
+
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
-        {/* <BranchSwitcher gym={gym} /> */}
         <p>aqui va algo</p>
       </SidebarHeader>
 
@@ -93,7 +68,7 @@ export function AppSidebar({ user }: { user: AuthUser }) {
           <SidebarGroupLabel>Aplicación</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => {
+              {filteredItems.map((item) => {
                 if (item.items) {
                   return (
                     <Collapsible
@@ -115,7 +90,7 @@ export function AppSidebar({ user }: { user: AuthUser }) {
                             {item.items?.map((subItem) => (
                               <SidebarMenuSubItem key={subItem.title}>
                                 <SidebarMenuSubButton asChild>
-                                  <a href={subItem.url}>
+                                  <a href={subItem.path}>
                                     <span>{subItem.title}</span>
                                   </a>
                                 </SidebarMenuSubButton>
@@ -131,7 +106,7 @@ export function AppSidebar({ user }: { user: AuthUser }) {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild tooltip={item.title}>
-                      <Link to={item.url}>
+                      <Link to={item.path}>
                         {item.icon && <item.icon />}
                         <span>{item.title}</span>
                       </Link>

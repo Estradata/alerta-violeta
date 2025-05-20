@@ -1,4 +1,4 @@
-import type { AuthUser } from '@packages/auth/types'
+import type { AuthAdminUser } from '@packages/auth-admin/types'
 import { useGlobalStore } from '@/store/global-store'
 import { storagePrefix } from '@/config'
 import { useRouter } from '@tanstack/react-router'
@@ -24,7 +24,7 @@ export function useAuth(): AuthContext {
   const setUser = useGlobalStore((s) => s.setUser)
 
   const login = useCallback(
-    (user: AuthUser, token: string) => {
+    (user: AuthAdminUser, token: string) => {
       setUser(user)
       setStoredToken(token)
       // TODO:
@@ -49,7 +49,7 @@ export function useAuth(): AuthContext {
 
 export type AuthContext = {
   isAuthenticated: boolean
-  user: AuthUser | null
-  login: (user: AuthUser, token: string) => void
+  user: AuthAdminUser | null
+  login: (user: AuthAdminUser, token: string) => void
   logout: () => void
 }

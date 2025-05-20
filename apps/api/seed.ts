@@ -1,8 +1,8 @@
 import { RequestHandler } from 'express'
-import { MODULE_PERMISSIONS_MAP } from '@packages/permissions/consts'
 import { Permission, PermissionAction, PermissionModule } from '@prisma/client'
 import { db } from '@/lib/db'
-import { PermissionId } from '@packages/permissions/schema'
+import { MODULE_PERMISSIONS_MAP } from '@packages/admin-permissions/consts'
+import { PermissionId } from '@packages/admin-permissions/schema'
 
 export const seedDB: RequestHandler = async (_, res) => {
   const data: Permission[] = []

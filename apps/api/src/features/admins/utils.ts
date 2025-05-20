@@ -1,5 +1,6 @@
 import { db } from '@/lib/db'
-import { Admin } from '@prisma/client'
+import type { Permission } from '@packages/admin-permissions/types'
+import { Admin, type Permission as PermissionDB } from '@prisma/client'
 
 export async function checkIsAdminEmailTaken(
   email: string
@@ -13,6 +14,9 @@ export async function checkIsAdminEmailTaken(
   return admin
 }
 
+/**
+ * Use in CREATE or UPDATE
+ */
 export async function getRoleAndPermissions(data: {
   roleId?: string | null
   customPermissions: string[]
@@ -33,4 +37,22 @@ export async function getRoleAndPermissions(data: {
   }
 
   return { roleId, customPermissions }
+}
+
+/**
+ * Used in admin-extractor-middleware, login and verify
+ */
+export function getAdminPermissions(admin: {
+  role: { permissions: PermissionDB[] } | null
+  customPermissions: PermissionDB[]
+}) {
+  let permissions: Permission[] = []
+
+  if (admin.role?.permissions) {
+    permissions = admin.role.permissions as Permission[]
+  } else {
+    permissions = admin.customPermissions as Permission[]
+  }
+
+  return permissions
 }

@@ -1,4 +1,4 @@
-import { PermissionIdSchema } from '../permissions/schema'
+import { PermissionIdSchema } from '../admin-permissions/schema'
 import { z } from 'zod'
 
 /**

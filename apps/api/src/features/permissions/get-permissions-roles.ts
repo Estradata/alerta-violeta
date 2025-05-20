@@ -1,7 +1,7 @@
 import { db } from '@/lib/db'
 import { RequestHandler } from 'express'
-import { GetPermissionsRoles } from '@packages/permissions/types'
-import { PermissionId } from '@packages/permissions/schema'
+import { GetPermissionsRoles } from '@packages/admin-permissions/types'
+import { PermissionId } from '@packages/admin-permissions/schema'
 
 export const getPermissionsRoles: RequestHandler = async (_, res, next) => {
   try {

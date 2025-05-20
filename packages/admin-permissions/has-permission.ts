@@ -1,14 +1,9 @@
 import { MODULE_PERMISSIONS_MAP } from './consts'
-import type { PermissionAction, PermissionModule } from '../permissions/schema'
+import type { PermissionAction, PermissionModule } from './schema'
 
 type Permission = {
   module: PermissionModule
   action: PermissionAction // Only the highest allowed action is stored
-}
-
-type AdminContext = {
-  rolePermissions?: Permission[] // Permisos del rol
-  customPermissions?: Permission[] // Permisos individuales
 }
 
 /**
@@ -32,28 +27,20 @@ type AdminContext = {
  * hasPermission(admin, { module: "invoice", action: "view" }); // ❌ false
  */
 export function hasPermission(
-  context: {
-    rolePermissions?: Permission[]
-    customPermissions?: Permission[]
-  },
-  target: { module: PermissionModule; action: PermissionAction }
+  permissions: Permission[] | undefined,
+  module: PermissionModule,
+  action: PermissionAction = 'VIEW'
 ): boolean {
-  const { rolePermissions, customPermissions } = context
+  if (!permissions) return false
 
-  const sourcePermissions = customPermissions?.length
-    ? customPermissions
-    : (rolePermissions ?? [])
+  const modulePermissions = MODULE_PERMISSIONS_MAP[module]
 
-  const modulePermissions = MODULE_PERMISSIONS_MAP[target.module]
-
-  if (!modulePermissions.includes(target.action)) {
+  if (!modulePermissions.includes(action)) {
     // Invalid action for the module
     return false
   }
 
-  const matched = sourcePermissions.find(
-    (perm) => perm.module === target.module
-  )
+  const matched = permissions.find((perm) => perm.module === module)
 
   if (!matched) return false
 
@@ -61,7 +48,7 @@ export function hasPermission(
   const permissionOrder: PermissionAction[] = ['VIEW', 'UPDATE']
 
   const userLevel = permissionOrder.indexOf(matched.action)
-  const requiredLevel = permissionOrder.indexOf(target.action)
+  const requiredLevel = permissionOrder.indexOf(action)
 
   return userLevel >= requiredLevel
 }

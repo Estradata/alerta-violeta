@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { ControlledInput } from '@/components/form'
 import { Form } from '@/components/ui/form'
-import { groupByModule } from '@packages/permissions/utils'
+import { groupByModule } from '@packages/admin-permissions/utils'
 import { Label } from '@/components/ui/label'
 import { usePermissions } from '@/features/permissions/api/get-permissions'
 import type { AdminData } from '@packages/admins/schema'
@@ -10,11 +10,11 @@ import { usePermissionsRoles } from '@/features/permissions/api/get-permissions-
 import {
   MODULE_PERMISSIONS_LABELS,
   ACTION_PERMISSIONS_LABELS,
-} from '@packages/permissions/consts'
+} from '@packages/admin-permissions/consts'
 import type {
   PermissionId,
   PermissionModule,
-} from '@packages/permissions/schema'
+} from '@packages/admin-permissions/schema'
 import {
   Select,
   SelectContent,

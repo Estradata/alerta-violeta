@@ -1,4 +1,4 @@
-import type { LoginResponse } from '@packages/auth/types'
+import type { LoginResponse } from '@packages/auth-admin/types'
 import type { LoginData } from '@packages/auth/schema'
 import { useMutation } from '@tanstack/react-query'
 import { axios } from '@/lib/axios'

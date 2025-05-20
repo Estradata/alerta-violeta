@@ -1,9 +1,9 @@
 import { create } from 'zustand'
-import { type AuthUser } from '@packages/auth/types'
+import { type AuthAdminUser } from '@packages/auth-admin/types'
 
 type Store = {
-  user: AuthUser | null
-  setUser: (user: AuthUser | null) => void
+  user: AuthAdminUser | null
+  setUser: (user: AuthAdminUser | null) => void
 }
 
 export const useGlobalStore = create<Store>()((set) => ({

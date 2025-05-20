@@ -1,4 +1,4 @@
-import type { PermissionId } from '../permissions/schema'
+import type { PermissionId } from '../admin-permissions/schema'
 import type { DataResponse, MsgResponse } from '../misc/types'
 
 export type Admin = {
