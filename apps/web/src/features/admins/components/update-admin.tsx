@@ -59,7 +59,7 @@ export function UpdateAdmin() {
           onSubmit={onSubmit}
           form={form}
           type='update'
-          isLoading={false}
+          isLoading={updateMutation.isPending}
         />
       </DialogContent>
     </Dialog>

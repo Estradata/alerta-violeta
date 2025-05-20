@@ -1,10 +1,12 @@
 import { ValidationError } from '@packages/errors'
 import { adminSchema } from '@packages/admins/schema'
 import { RequestHandler } from 'express'
-import { checkIsAdminEmailTaken } from '@/features/admins/utils'
+import {
+  checkIsAdminEmailTaken,
+  getRoleAndPermissions,
+} from '@/features/admins/utils'
 import { db } from '@/lib/db'
 import { hash } from '@/utils/hash'
-import { AdminRole } from '@prisma/client'
 import { CreateAdminResponse } from '@packages/admins/types'
 
 export const createAdmin: RequestHandler = async (req, res, next) => {
@@ -33,26 +35,21 @@ export const createAdmin: RequestHandler = async (req, res, next) => {
       })
 
     /**
+     * Calculate new role or permissions
+     */
+    const { roleId, customPermissions } = await getRoleAndPermissions(data)
+
+    /**
      * Create admin
      */
     const hashedPassword = await hash(data.password)
-    const hasRoleSelected = data.roleId && data.roleId !== 'NONE'
-    let role: AdminRole | null = null
-    let customPermissions: Array<{ id: string }> = []
-
-    if (hasRoleSelected) {
-      role = await db.adminRole.findUnique({ where: { id: data.roleId! } })
-    } else if (data.customPermissions.length) {
-      customPermissions = data.customPermissions.map((id) => ({ id }))
-    }
-
     await db.admin.create({
       data: {
         email: data.email,
         name: data.name,
         accountId: account.id,
         password: hashedPassword,
-        roleId: role?.id,
+        roleId,
         customPermissions: {
           connect: customPermissions,
         },
