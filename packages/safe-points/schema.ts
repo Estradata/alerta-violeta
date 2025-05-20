@@ -12,6 +12,9 @@ export const safePointSchema = z.object({
   lat: z.coerce.number(),
   lng: z.coerce.number(),
 
+  // TODO: PUNTO_VIOLETA
+  // SAFE_POINT
+  // VER COMO OBTENER LA CALLE ETC DADA UNA LAT Y LNG
   type: z.enum(['ONG', 'PUBLIC', 'PRIVATE']),
 })
 

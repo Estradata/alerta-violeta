@@ -12,22 +12,26 @@ import { AdminForm } from '@/features/admins/components/admin-form'
 import { useUiStore } from '@/features/admins/store/ui'
 import { useUpdateAdmin } from '@/features/admins/api/update-admin'
 import { applyFormErrors } from '@/lib/react-hook-form'
+import { usePermissionsRoles } from '@/features/permissions/api/get-permissions-roles'
 
 export function UpdateAdmin() {
   const data = useUiStore((s) => s.updateDialog.data)
   const open = useUiStore((s) => s.updateDialog.open)
   const onClose = useUiStore((s) => s.closeUpdateDialog)
+  const roles = usePermissionsRoles().data?.data || []
   const form = useForm<AdminData>({
     resolver: zodResolver(adminSchema),
     values: {
       id: data?.id || '',
-      customPermissions: data?.permissions || [],
       email: data?.email || '',
       name: data?.name || '',
       changePassword: false,
       password: '',
       confirmPassword: '',
       roleId: data?.roleId || 'NONE',
+      customPermissions: data?.roleId
+        ? roles.find((r) => r.id === data.roleId)?.permissionIds || []
+        : data?.permissions || [],
     },
   })
 
@@ -56,6 +60,7 @@ export function UpdateAdmin() {
         </DialogHeader>
 
         <AdminForm
+          roles={roles}
           onSubmit={onSubmit}
           form={form}
           type='update'

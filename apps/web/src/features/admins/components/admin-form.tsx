@@ -6,7 +6,6 @@ import { Label } from '@/components/ui/label'
 import { usePermissions } from '@/features/permissions/api/get-permissions'
 import type { AdminData } from '@packages/admins/schema'
 import type { UseFormReturn } from 'react-hook-form'
-import { usePermissionsRoles } from '@/features/permissions/api/get-permissions-roles'
 import {
   MODULE_PERMISSIONS_LABELS,
   ACTION_PERMISSIONS_LABELS,
@@ -25,6 +24,7 @@ import {
 import { cn } from '@/lib/utils'
 import { ControlledSelect } from '@/components/form/controlled-select'
 import { ControlledCheckbox } from '@/components/form/controlled-checkbox'
+import type { GetPermissionsRoles } from '@packages/admin-permissions/types'
 
 type UIPermission = PermissionId | `${PermissionModule}.NONE`
 
@@ -34,15 +34,16 @@ export function AdminForm({
   onSubmit,
   isLoading,
   disabled,
+  roles,
 }: {
   form: UseFormReturn<AdminData>
   onSubmit: (data: AdminData) => void
   isLoading: boolean
   type: 'create' | 'update'
   disabled?: boolean
+  roles: GetPermissionsRoles['data']
 }) {
   const permissions = usePermissions().data?.data || []
-  const roles = usePermissionsRoles().data?.data || []
   const groupedPermissions = groupByModule(permissions)
   const selectedPermissions = form.watch('customPermissions') as PermissionId[]
   const selectedRole = form.watch('roleId')
