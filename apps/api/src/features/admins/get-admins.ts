@@ -9,6 +9,9 @@ export const getAdmins: RequestHandler = async (req, res, next) => {
     ensureAuth(req.admin.permissions, 'ADMINS', 'VIEW')
 
     const admins = await db.admin.findMany({
+      where: {
+        accountId: req.admin.accountId,
+      },
       include: {
         customPermissions: {
           select: {

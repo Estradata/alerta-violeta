@@ -7,7 +7,11 @@ export const getUsers: RequestHandler = async (req, res, next) => {
   try {
     ensureAuth(req.admin.permissions, 'USERS', 'VIEW')
 
-    const users = await db.user.findMany()
+    const users = await db.user.findMany({
+      where: {
+        accountId: req.admin.accountId,
+      },
+    })
 
     res.json({
       data: users.map((user) => {
