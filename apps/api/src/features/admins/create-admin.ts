@@ -8,9 +8,12 @@ import {
 import { db } from '@/lib/db'
 import { hash } from '@/utils/hash'
 import { CreateAdminResponse } from '@packages/admins/types'
+import { ensureAuth } from '@/utils/ensure-auth'
 
 export const createAdmin: RequestHandler = async (req, res, next) => {
   try {
+    ensureAuth(req.admin.permissions, 'ADMINS', 'UPDATE')
+
     const data = adminSchema.parse(req.body)
 
     /**

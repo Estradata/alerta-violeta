@@ -2,9 +2,12 @@ import { db } from '@/lib/db'
 import { RequestHandler } from 'express'
 import { GetPermissionsRoles } from '@packages/admin-permissions/types'
 import { PermissionId } from '@packages/admin-permissions/schema'
+import { ensureAuth } from '@/utils/ensure-auth'
 
-export const getPermissionsRoles: RequestHandler = async (_, res, next) => {
+export const getPermissionsRoles: RequestHandler = async (req, res, next) => {
   try {
+    ensureAuth(req.admin.permissions, 'ADMINS', 'UPDATE')
+
     const roles = await db.adminRole.findMany({
       include: {
         permissions: {

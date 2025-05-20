@@ -11,11 +11,13 @@ const adminRouter = express.Router()
 
 adminRouter
   .use(adminExtractor)
-  .use(`/safe-points`, SafePointsRouter)
-  .use(`/emergency-contacts`, EmergencyContactsRouter)
-  .use(`/alerts`, AlertsRouter)
-  .use(`/users`, UsersRouter)
   .use('/permissions', PermissionsRouter)
   .use('/admins', AdminsRouter)
+  .use(`/safe-points`, SafePointsRouter)
+  .use(`/users`, UsersRouter)
+
+  // TODO: add authorization validation
+  .use(`/emergency-contacts`, EmergencyContactsRouter)
+  .use(`/alerts`, AlertsRouter)
 
 export default adminRouter

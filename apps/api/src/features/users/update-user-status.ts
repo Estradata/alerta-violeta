@@ -2,6 +2,7 @@ import { updateUserStatusSchema } from '@packages/users/schema'
 import { db } from '@/lib/db'
 import { RequestHandler } from 'express'
 import type { UpdateUserStatusResponse } from '@packages/users/types'
+import { ensureAuth } from '@/utils/ensure-auth'
 
 export const updateUserStatus: RequestHandler<{ id: string }> = async (
   req,
@@ -9,6 +10,8 @@ export const updateUserStatus: RequestHandler<{ id: string }> = async (
   next
 ) => {
   try {
+    ensureAuth(req.admin.permissions, 'USERS', 'UPDATE')
+
     const id = req.params.id
     const { status } = updateUserStatusSchema.parse(req.body)
 

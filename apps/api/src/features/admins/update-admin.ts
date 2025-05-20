@@ -3,6 +3,7 @@ import {
   getRoleAndPermissions,
 } from '@/features/admins/utils'
 import { db } from '@/lib/db'
+import { ensureAuth } from '@/utils/ensure-auth'
 import { hash } from '@/utils/hash'
 import { adminSchema } from '@packages/admins/schema'
 import { UpdateAdminResponse } from '@packages/admins/types'
@@ -15,6 +16,8 @@ export const updateAdmin: RequestHandler<{ id: string }> = async (
   next
 ) => {
   try {
+    ensureAuth(req.admin.permissions, 'ADMINS', 'UPDATE')
+
     const data = adminSchema.parse(req.body)
     const adminId = req.params.id
 
