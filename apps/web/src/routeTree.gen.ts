@@ -16,8 +16,6 @@ import { Route as AppRouteImport } from './routes/app/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as AppUsersImport } from './routes/app/users'
 import { Route as AppSafePointsImport } from './routes/app/safe-points'
-import { Route as AppMonitoringImport } from './routes/app/monitoring'
-import { Route as AppEmergencyContactsImport } from './routes/app/emergency-contacts'
 import { Route as AppAdminsImport } from './routes/app/admins'
 
 // Create/Update Routes
@@ -49,18 +47,6 @@ const AppUsersRoute = AppUsersImport.update({
 const AppSafePointsRoute = AppSafePointsImport.update({
   id: '/safe-points',
   path: '/safe-points',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-
-const AppMonitoringRoute = AppMonitoringImport.update({
-  id: '/monitoring',
-  path: '/monitoring',
-  getParentRoute: () => AppRouteRoute,
-} as any)
-
-const AppEmergencyContactsRoute = AppEmergencyContactsImport.update({
-  id: '/emergency-contacts',
-  path: '/emergency-contacts',
   getParentRoute: () => AppRouteRoute,
 } as any)
 
@@ -102,20 +88,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAdminsImport
       parentRoute: typeof AppRouteImport
     }
-    '/app/emergency-contacts': {
-      id: '/app/emergency-contacts'
-      path: '/emergency-contacts'
-      fullPath: '/app/emergency-contacts'
-      preLoaderRoute: typeof AppEmergencyContactsImport
-      parentRoute: typeof AppRouteImport
-    }
-    '/app/monitoring': {
-      id: '/app/monitoring'
-      path: '/monitoring'
-      fullPath: '/app/monitoring'
-      preLoaderRoute: typeof AppMonitoringImport
-      parentRoute: typeof AppRouteImport
-    }
     '/app/safe-points': {
       id: '/app/safe-points'
       path: '/safe-points'
@@ -137,16 +109,12 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteRouteChildren {
   AppAdminsRoute: typeof AppAdminsRoute
-  AppEmergencyContactsRoute: typeof AppEmergencyContactsRoute
-  AppMonitoringRoute: typeof AppMonitoringRoute
   AppSafePointsRoute: typeof AppSafePointsRoute
   AppUsersRoute: typeof AppUsersRoute
 }
 
 const AppRouteRouteChildren: AppRouteRouteChildren = {
   AppAdminsRoute: AppAdminsRoute,
-  AppEmergencyContactsRoute: AppEmergencyContactsRoute,
-  AppMonitoringRoute: AppMonitoringRoute,
   AppSafePointsRoute: AppSafePointsRoute,
   AppUsersRoute: AppUsersRoute,
 }
@@ -160,8 +128,6 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/app/admins': typeof AppAdminsRoute
-  '/app/emergency-contacts': typeof AppEmergencyContactsRoute
-  '/app/monitoring': typeof AppMonitoringRoute
   '/app/safe-points': typeof AppSafePointsRoute
   '/app/users': typeof AppUsersRoute
 }
@@ -171,8 +137,6 @@ export interface FileRoutesByTo {
   '/app': typeof AppRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/app/admins': typeof AppAdminsRoute
-  '/app/emergency-contacts': typeof AppEmergencyContactsRoute
-  '/app/monitoring': typeof AppMonitoringRoute
   '/app/safe-points': typeof AppSafePointsRoute
   '/app/users': typeof AppUsersRoute
 }
@@ -183,8 +147,6 @@ export interface FileRoutesById {
   '/app': typeof AppRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/app/admins': typeof AppAdminsRoute
-  '/app/emergency-contacts': typeof AppEmergencyContactsRoute
-  '/app/monitoring': typeof AppMonitoringRoute
   '/app/safe-points': typeof AppSafePointsRoute
   '/app/users': typeof AppUsersRoute
 }
@@ -196,8 +158,6 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/app/admins'
-    | '/app/emergency-contacts'
-    | '/app/monitoring'
     | '/app/safe-points'
     | '/app/users'
   fileRoutesByTo: FileRoutesByTo
@@ -206,8 +166,6 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/app/admins'
-    | '/app/emergency-contacts'
-    | '/app/monitoring'
     | '/app/safe-points'
     | '/app/users'
   id:
@@ -216,8 +174,6 @@ export interface FileRouteTypes {
     | '/app'
     | '/login'
     | '/app/admins'
-    | '/app/emergency-contacts'
-    | '/app/monitoring'
     | '/app/safe-points'
     | '/app/users'
   fileRoutesById: FileRoutesById
@@ -257,8 +213,6 @@ export const routeTree = rootRoute
       "filePath": "app/route.tsx",
       "children": [
         "/app/admins",
-        "/app/emergency-contacts",
-        "/app/monitoring",
         "/app/safe-points",
         "/app/users"
       ]
@@ -268,14 +222,6 @@ export const routeTree = rootRoute
     },
     "/app/admins": {
       "filePath": "app/admins.tsx",
-      "parent": "/app"
-    },
-    "/app/emergency-contacts": {
-      "filePath": "app/emergency-contacts.tsx",
-      "parent": "/app"
-    },
-    "/app/monitoring": {
-      "filePath": "app/monitoring.tsx",
       "parent": "/app"
     },
     "/app/safe-points": {
