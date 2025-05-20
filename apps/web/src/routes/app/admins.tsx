@@ -1,4 +1,4 @@
-import { useAuth } from '@/auth'
+import { Auth, useAuth } from '@/auth'
 import { DashboardShell } from '@/components/dashboard-shell'
 import {
   Table,
@@ -32,36 +32,10 @@ function RouteComponent() {
   const admins = result.data?.data || []
   const openUpdateDialog = useUiStore((s) => s.openUpdateDialog)
   const openDeleteDialog = useUiStore((s) => s.openDeleteDialog)
-  // Every admin except the current user
-  const filteredAdmins = admins.filter((a) => a.id !== user.id)
+  const filteredAdmins = admins.filter((a) => a.id !== user.id) // Every admin except the current user
+  const canUpdateAdmins = hasAuthorization(user.permissions, 'ADMINS', 'UPDATE')
 
   const columns: ColumnDef<(typeof admins)[number]>[] = [
-    {
-      id: 'select',
-      header: ({ table }) => (
-        <Checkbox
-          disabled={!filteredAdmins.length}
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label='Seleccionar todo'
-          className='translate-y-[2px] cursor-pointer'
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected() && row.original.id !== user.id}
-          disabled={row.original.id === user.id}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label='Seleccionar fila'
-          className='translate-y-[2px] cursor-pointer'
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
     {
       id: 'name',
       header: ({ column }) => (
@@ -94,46 +68,80 @@ function RouteComponent() {
         )
       },
     },
-    {
+  ]
+
+  if (canUpdateAdmins) {
+    columns.unshift({
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          disabled={!filteredAdmins.length}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label='Seleccionar todo'
+          className='translate-y-[2px] cursor-pointer'
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected() && row.original.id !== user.id}
+          disabled={row.original.id === user.id}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label='Seleccionar fila'
+          className='translate-y-[2px] cursor-pointer'
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    })
+
+    columns.push({
       id: 'actions',
       header: ({ column }) => (
-        <TableColumnHeader column={column} title='Opciones' />
+        <Auth module='ADMINS' action='UPDATE'>
+          <TableColumnHeader column={column} title='Opciones' />
+        </Auth>
       ),
       cell: ({ row }) => {
         return (
-          <TableRowActions
-            actions={[
-              {
-                asChild: true,
-                render: (
-                  <button
-                    className='flex justify-start gap-2 items-center cursor-pointer w-full'
-                    onClick={() => openUpdateDialog(row.original)}
-                  >
-                    <EditIcon />
-                    <span>Actualizar</span>
-                  </button>
-                ),
-              },
-              {
-                asChild: true,
-                render: (
-                  <button
-                    className='flex justify-start gap-2 items-center cursor-pointer w-full'
-                    onClick={() => openDeleteDialog([row.original])}
-                  >
-                    <TrashIcon />
+          <Auth module='ADMINS' action='UPDATE'>
+            <TableRowActions
+              actions={[
+                {
+                  asChild: true,
+                  render: (
+                    <button
+                      className='flex justify-start gap-2 items-center cursor-pointer w-full'
+                      onClick={() => openUpdateDialog(row.original)}
+                    >
+                      <EditIcon />
+                      <span>Actualizar</span>
+                    </button>
+                  ),
+                },
+                {
+                  asChild: true,
+                  render: (
+                    <button
+                      className='flex justify-start gap-2 items-center cursor-pointer w-full'
+                      onClick={() => openDeleteDialog([row.original])}
+                    >
+                      <TrashIcon />
 
-                    <span>Eliminar</span>
-                  </button>
-                ),
-              },
-            ]}
-          />
+                      <span>Eliminar</span>
+                    </button>
+                  ),
+                },
+              ]}
+            />
+          </Auth>
         )
       },
-    },
-  ]
+    })
+  }
 
   return (
     <DashboardShell
@@ -151,9 +159,11 @@ function RouteComponent() {
         }}
         rowsPerPageLabel='Administradores por página'
       >
-        <CreateAdmin />
-        <UpdateAdmin />
-        <DeleteAdmins />
+        <Auth module='ADMINS' action='UPDATE'>
+          <CreateAdmin />
+          <UpdateAdmin />
+          <DeleteAdmins />
+        </Auth>
       </Table>
     </DashboardShell>
   )

@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { EmptyPlaceholder } from '@/components/empty-placeholder'
 import { hasAuthorization } from '@packages/admin-permissions/has-authorization'
 import { getDefaultRedirect } from '@/features/auth/utils/get-default-redirect'
+import { useAuth } from '@/auth'
 
 export const Route = createFileRoute('/app/users')({
   component: RouteComponent,
@@ -31,8 +32,10 @@ export const Route = createFileRoute('/app/users')({
 })
 
 function RouteComponent() {
+  const user = useAuth().user
   const result = useUsers()
   const users = result.data?.data || []
+  const canUpdateUsers = hasAuthorization(user?.permissions, 'USERS', 'UPDATE')
   const formatDate = (date: Date) => {
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
@@ -84,7 +87,13 @@ function RouteComponent() {
       ),
       cell: ({ row }) => {
         const user = row.original
-        return <UserStatusBadge id={user.id} status={user.status} />
+        return (
+          <UserStatusBadge
+            id={user.id}
+            status={user.status}
+            disabled={!canUpdateUsers}
+          />
+        )
       },
     },
     {
@@ -196,9 +205,11 @@ function RouteComponent() {
 export function UserStatusBadge({
   id,
   status,
+  disabled,
 }: {
   id: string
   status: User['status']
+  disabled?: boolean
 }) {
   const dialog = useDisclosure()
   const updateMutation = useUpdateUserStatus({
@@ -209,6 +220,8 @@ export function UserStatusBadge({
   const newStatus = status === 'ACTIVE' ? 'BLOCKED' : 'ACTIVE'
 
   function onClick() {
+    if (disabled) return
+
     dialog.onOpen()
   }
 
@@ -222,10 +235,10 @@ export function UserStatusBadge({
   return (
     <>
       <span
-        role='button'
+        role={!disabled ? undefined : 'button'}
         className={cn(
           'px-2 py-1 inline-flex items-center text-xs leading-5 font-medium rounded-full',
-          'cursor-pointer',
+          !disabled && 'cursor-pointer',
           status === 'ACTIVE'
             ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400'
             : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400'

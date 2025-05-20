@@ -1,3 +1,4 @@
+import { Auth } from '@/auth'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -30,8 +31,10 @@ export function SafePointsList({
 
   return (
     <div className='flex flex-col h-full'>
-      <DeleteSafePoints />
-      <UpdateSafePoint />
+      <Auth module='SAFE_POINTS' action='UPDATE'>
+        <DeleteSafePoints />
+        <UpdateSafePoint />
+      </Auth>
 
       {safePoints.length === 0 ? (
         <div className='flex flex-col items-center justify-center h-40 text-muted-foreground'>
@@ -70,56 +73,58 @@ export function SafePointsList({
                   <div className='flex items-start justify-between gap-4'>
                     <h3 className='font-medium'>{point.name}</h3>
 
-                    <div className='flex space-x-1'>
-                      <Button
-                        variant='ghost'
-                        size='icon'
-                        className='h-7 w-7'
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          onEditMarkerPosition({
-                            safePointId: point.id,
+                    <Auth module='SAFE_POINTS' action='UPDATE'>
+                      <div className='flex space-x-1'>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          className='h-7 w-7'
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onEditMarkerPosition({
+                              safePointId: point.id,
 
-                            lat: point.lat,
-                            lng: point.lng,
-                            address: point.address,
-                            googlePlaceId: point.googlePlaceId || '',
-                            name: point.name,
-                          })
-                        }}
-                      >
-                        <MapIcon className='h-4 w-4' />
-                        <span className='sr-only'>
-                          Editar posición en el mapa
-                        </span>
-                      </Button>
+                              lat: point.lat,
+                              lng: point.lng,
+                              address: point.address,
+                              googlePlaceId: point.googlePlaceId || '',
+                              name: point.name,
+                            })
+                          }}
+                        >
+                          <MapIcon className='h-4 w-4' />
+                          <span className='sr-only'>
+                            Editar posición en el mapa
+                          </span>
+                        </Button>
 
-                      <Button
-                        variant='ghost'
-                        size='icon'
-                        className='h-7 w-7'
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          openUpdateDialog(point)
-                        }}
-                      >
-                        <EditIcon className='h-4 w-4' />
-                        <span className='sr-only'>Editar datos</span>
-                      </Button>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          className='h-7 w-7'
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            openUpdateDialog(point)
+                          }}
+                        >
+                          <EditIcon className='h-4 w-4' />
+                          <span className='sr-only'>Editar datos</span>
+                        </Button>
 
-                      <Button
-                        variant='ghost'
-                        size='icon'
-                        className='h-7 w-7 text-destructive hover:text-destructive'
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          openDeleteDialog([point])
-                        }}
-                      >
-                        <Trash2Icon className='h-4 w-4' />
-                        <span className='sr-only'>Eliminar</span>
-                      </Button>
-                    </div>
+                        <Button
+                          variant='ghost'
+                          size='icon'
+                          className='h-7 w-7 text-destructive hover:text-destructive'
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            openDeleteDialog([point])
+                          }}
+                        >
+                          <Trash2Icon className='h-4 w-4' />
+                          <span className='sr-only'>Eliminar</span>
+                        </Button>
+                      </div>
+                    </Auth>
                   </div>
 
                   <div>

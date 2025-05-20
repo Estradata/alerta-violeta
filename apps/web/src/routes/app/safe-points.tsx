@@ -1,3 +1,4 @@
+import { Auth } from '@/auth'
 import { Button } from '@/components/ui/button'
 import {
   Command,
@@ -155,60 +156,64 @@ function Content() {
     >
       {/* Barra superior con búsqueda y botón de menú */}
       <div className='absolute top-0 left-0 right-0 z-10 flex items-center justify-between p-4 bg-sidebar gap-4'>
-        <AutocompleteControl
-          onPlaceSelect={onAutocompletePlaceSelect}
-          {...autocomplete}
-        />
+        <Auth module='SAFE_POINTS' action='UPDATE' fallback={<div />}>
+          <AutocompleteControl
+            onPlaceSelect={onAutocompletePlaceSelect}
+            {...autocomplete}
+          />
+        </Auth>
 
         <div className='flex items-center gap-1 md:gap-2'>
-          {markerMode === null && (
-            <Button
-              size='icon'
-              onClick={() => {
-                setMarkerMode('create')
-              }}
-            >
-              <PlusIcon className='h-4 w-4' />
-              <span className='sr-only'>Añadir punto</span>
-            </Button>
-          )}
-
-          {markerMode === 'create' && (
-            <>
-              <Button size='icon' variant='outline' onClick={resetMarker}>
-                <XIcon className='h-4 w-4' />
-                <span className='sr-only'>Cancelar</span>
-              </Button>
-
-              <CreateSafePoint
-                disabled={!marker}
-                clearMarker={resetMarker}
-                data={{
-                  name: marker?.name,
-                  address: marker?.address,
-                  googlePlaceId: marker?.googlePlaceId,
-                  lat: marker?.lat || 0,
-                  lng: marker?.lng || 0,
+          <Auth module='SAFE_POINTS' action='UPDATE'>
+            {markerMode === null && (
+              <Button
+                size='icon'
+                onClick={() => {
+                  setMarkerMode('create')
                 }}
-              />
-            </>
-          )}
-
-          {markerMode === 'edit' && (
-            <>
-              <Button size='icon' variant='outline' onClick={resetMarker}>
-                <XIcon className='h-4 w-4' />
-                <span className='sr-only'>Cancelar</span>
+              >
+                <PlusIcon className='h-4 w-4' />
+                <span className='sr-only'>Añadir punto</span>
               </Button>
+            )}
 
-              <Button size='icon' onClick={onSaveSafePoint}>
-                <SaveIcon className='h-4 w-4' />
-                <span className='sr-only'>
-                  Guardar nueva ubicación del punto
-                </span>
-              </Button>
-            </>
-          )}
+            {markerMode === 'create' && (
+              <>
+                <Button size='icon' variant='outline' onClick={resetMarker}>
+                  <XIcon className='h-4 w-4' />
+                  <span className='sr-only'>Cancelar</span>
+                </Button>
+
+                <CreateSafePoint
+                  disabled={!marker}
+                  clearMarker={resetMarker}
+                  data={{
+                    name: marker?.name,
+                    address: marker?.address,
+                    googlePlaceId: marker?.googlePlaceId,
+                    lat: marker?.lat || 0,
+                    lng: marker?.lng || 0,
+                  }}
+                />
+              </>
+            )}
+
+            {markerMode === 'edit' && (
+              <>
+                <Button size='icon' variant='outline' onClick={resetMarker}>
+                  <XIcon className='h-4 w-4' />
+                  <span className='sr-only'>Cancelar</span>
+                </Button>
+
+                <Button size='icon' onClick={onSaveSafePoint}>
+                  <SaveIcon className='h-4 w-4' />
+                  <span className='sr-only'>
+                    Guardar nueva ubicación del punto
+                  </span>
+                </Button>
+              </>
+            )}
+          </Auth>
 
           <Sheet open={sheet.open} onOpenChange={sheet.onOpenChange}>
             <SheetTrigger asChild>
