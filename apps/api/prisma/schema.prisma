@@ -1,24 +1,159 @@
 generator client {
-   provider = "prisma-client-js"
-   output   = "generated/prisma/client"
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
-   provider = "mysql"
-   url      = env("MYSQL_DATABASE_URL")
+  provider = "mysql"
+  url      = env("MYSQL_DATABASE_URL")
 }
 
 model Account {
-   id String @id @default(uuid())
-   users User[]
+  id   String @id @default(uuid())
+  name String
+
+  users  User[]
+  admins Admin[]
+
+  safePoints        SafePoint[]
+  emergencyContacts EmergencyContact[]
+
+  @@map("accounts")
+}
+
+// Mobile App Users
+enum UserStatus {
+  ACTIVE
+  BLOCKED
 }
 
 model User {
-   id   String @id @default(uuid())
-   name String
+  id        String  @id @default(uuid())
+  account   Account @relation(fields: [accountId], references: [id])
+  accountId String  @map("account_id")
 
-   account   Account @relation(fields: [accountId], references: [id])
-   accountId String
+  email    String @unique
+  name     String
+  password String
 
-   @@map("users")
+  status UserStatus @default(ACTIVE)
+  alerts Alert[]
+
+  lastLogin DateTime @default(now()) @map("last_login")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("users")
+}
+
+model Alert {
+  id String @id @default(uuid())
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @map("user_id")
+
+  lat Float
+  lng Float
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("alerts")
+}
+
+model SafePoint {
+  id        String  @id @default(uuid())
+  account   Account @relation(fields: [accountId], references: [id])
+  accountId String  @map("account_id")
+
+  name          String
+  address       String
+  googlePlaceId String? @map("google_place_id")
+  lat           Float
+  lng           Float
+  type          String
+
+  @@map("safe_points")
+}
+
+model EmergencyContact {
+  id        String  @id @default(uuid())
+  account   Account @relation(fields: [accountId], references: [id])
+  accountId String  @map("account_id")
+
+  name        String
+  phone       String
+  description String
+
+  @@map("emergency_contacts")
+}
+
+// Web Panel Users
+model Admin {
+  id        String  @id @default(uuid())
+  account   Account @relation(fields: [accountId], references: [id])
+  accountId String  @map("account_id")
+
+  email    String @unique
+  name     String
+  password String
+
+  // A defined role, with pre-defined permissions
+  role              AdminRole?    @relation(fields: [roleId], references: [id], onDelete: SetNull)
+  roleId            String?
+  // OR a list of custom permissions
+  customPermissions Permission[]
+  activities        ActivityLog[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("admins")
+}
+
+model AdminRole {
+  id   String @id
+  name String @unique
+
+  permissions Permission[]
+  users       Admin[]
+
+  @@map("admin_roles")
+}
+
+enum PermissionModule {
+  ADMINS
+  USERS
+  SAFE_POINTS
+}
+
+enum PermissionAction {
+  VIEW
+  UPDATE
+
+  @@map("Action")
+}
+
+model Permission {
+  id     String           @id
+  module PermissionModule
+  action PermissionAction
+
+  roles AdminRole[]
+  users Admin[]
+
+  @@unique([module, action])
+  @@map("permissions")
+}
+
+model ActivityLog {
+  id     String            @id @default(uuid())
+  module PermissionModule?
+  action String
+
+  admin   Admin  @relation(fields: [adminId], references: [id])
+  adminId String @map("admin_id")
+
+  description String? @db.Text()
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("activity_log")
 }
