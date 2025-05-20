@@ -150,6 +150,7 @@ function RouteComponent() {
     >
       <Table
         columns={columns}
+        searchColumn='name'
         enableMultiDelete={Boolean(filteredAdmins.length)}
         data={admins}
         onMultiDelete={() => {
