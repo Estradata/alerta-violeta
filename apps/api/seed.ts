@@ -49,6 +49,7 @@ export const seedDB: RequestHandler = async (_, res) => {
     // Monitoring Operator: Only view map safety locations and reports.
     await createAdminRole('MONITORING_OPERATOR', 'Operador de Monitoreo', [
       'SAFE_POINTS.VIEW',
+      'USERS.VIEW',
     ])
 
     // Marker Editor: Full access to manage safety locations (Including bulk import/export).
@@ -58,7 +59,7 @@ export const seedDB: RequestHandler = async (_, res) => {
 
     // Alert Tracker: Full Access to follow up on alerts.
     await createAdminRole('ALERT_TRACKER', 'Editor de Marcadores', [])
-  } catch(err) {
+  } catch (err) {
     console.log(err)
     console.log('Roles duplicados, saltando...')
   }
