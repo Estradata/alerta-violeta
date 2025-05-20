@@ -1,7 +1,7 @@
 import { ValidationError } from '@packages/errors'
 import { adminSchema } from '@packages/admins/schema'
 import { RequestHandler } from 'express'
-import { checkIsAdminEmailAvailable } from '@/features/admins/utils'
+import { checkIsAdminEmailTaken } from '@/features/admins/utils'
 import { db } from '@/lib/db'
 import { hash } from '@/utils/hash'
 import { AdminRole } from '@prisma/client'
@@ -14,8 +14,8 @@ export const createAdmin: RequestHandler = async (req, res, next) => {
     /**
      * Check email available
      */
-    const available = await checkIsAdminEmailAvailable(data.email)
-    if (!available)
+    const isEmailTaken = await checkIsAdminEmailTaken(data.email)
+    if (isEmailTaken)
       throw new ValidationError({
         email: 'Este correo no está disponible',
       })

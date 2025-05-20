@@ -20,6 +20,7 @@ export function UpdateAdmin() {
   const form = useForm<AdminData>({
     resolver: zodResolver(adminSchema),
     values: {
+      id: data?.id || '',
       customPermissions: data?.permissions || [],
       email: data?.email || '',
       name: data?.name || '',
