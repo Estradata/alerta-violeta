@@ -51,6 +51,8 @@ export function AdminForm({
   const changePassword = form.getValues('changePassword')
 
   function onChangePermission(id: UIPermission, m: PermissionModule) {
+    if (!id || !m) return
+
     const filteredPermissions = selectedPermissions.filter(
       (p) => !p.includes(m)
     )
@@ -68,7 +70,8 @@ export function AdminForm({
     if (roleId === 'NONE') {
       form.setValue('customPermissions', [])
     } else {
-      const permissions = roles.find((r) => r.id === roleId)?.permissionIds || []
+      const permissions =
+        roles.find((r) => r.id === roleId)?.permissionIds || []
       form.setValue('customPermissions', permissions)
     }
   }
@@ -139,7 +142,6 @@ export function AdminForm({
             control={form.control}
             name='roleId'
             label='Rol y Permisos'
-            // on={()}
             onChange={onRoleChange}
           >
             <SelectItem value='NONE'>Personalizado</SelectItem>
@@ -185,6 +187,12 @@ export function AdminForm({
                       </SelectItem>
 
                       {group.permissions.map((permission) => {
+                        const ADMINS_UPDATE = permission.id === 'ADMINS.UPDATE'
+
+                        if (!hasRoleSelected && ADMINS_UPDATE) {
+                          return null
+                        }
+
                         return (
                           <SelectItem key={permission.id} value={permission.id}>
                             {ACTION_PERMISSIONS_LABELS[permission.action]}

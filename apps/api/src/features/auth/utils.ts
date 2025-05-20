@@ -7,5 +7,5 @@ export async function checkIsUserEmailTaken(email: string) {
     },
   })
 
-  return !record
+  return record
 }

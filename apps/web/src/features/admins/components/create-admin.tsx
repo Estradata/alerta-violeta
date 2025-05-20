@@ -14,6 +14,7 @@ import { type AdminData, adminSchema } from '@packages/admins/schema'
 import { AdminForm } from '@/features/admins/components/admin-form'
 import { useCreateAdmin } from '@/features/admins/api/create-admin'
 import { applyFormErrors } from '@/lib/react-hook-form'
+import { usePermissionsRoles } from '@/features/permissions/api/get-permissions-roles'
 
 const defaultValues: AdminData = {
   name: '',
@@ -26,6 +27,8 @@ const defaultValues: AdminData = {
 }
 
 export function CreateAdmin() {
+  const result = usePermissionsRoles()
+  const roles = result.data?.data || []
   const { open, onOpenChange, onClose } = useDisclosure()
   const form = useForm<AdminData>({
     resolver: zodResolver(adminSchema),
@@ -61,6 +64,7 @@ export function CreateAdmin() {
         </DialogHeader>
 
         <AdminForm
+          roles={roles}
           onSubmit={onSubmit}
           form={form}
           type='create'
