@@ -4,7 +4,7 @@ import { selectColumn } from '@/components/data-table/utils/select-column'
 import { useUsers } from '@/features/users/api/get-users'
 import { cn } from '@/lib/utils'
 import type { User } from '@packages/users/types'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 import {
   AlertCircleIcon,
@@ -18,9 +18,16 @@ import { useUpdateUserStatus } from '@/features/users/api/update-user-status'
 import { ConfirmationDialog } from '@/components/confirmation-dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { EmptyPlaceholder } from '@/components/empty-placeholder'
+import { hasPermission } from '@packages/admin-permissions/has-permission'
+import { getDefaultRedirect } from '@/features/auth/utils/get-default-redirect'
 
 export const Route = createFileRoute('/app/users')({
   component: RouteComponent,
+  beforeLoad({ context }) {
+    if (!hasPermission(context.auth.user?.permissions, 'USERS')) {
+      throw redirect({ to: getDefaultRedirect(context.auth.user) })
+    }
+  },
 })
 
 function RouteComponent() {

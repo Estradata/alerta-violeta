@@ -13,6 +13,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { GOOGLE_MAPS_API_KEY } from '@/config'
+import { getDefaultRedirect } from '@/features/auth/utils/get-default-redirect'
 import { useSafePoints } from '@/features/safe-points/api/get-safe-points'
 import { useUpdateSafePoint } from '@/features/safe-points/api/update-safe-point'
 import { CreateSafePoint } from '@/features/safe-points/components/create-safe-point'
@@ -21,8 +22,9 @@ import { SafePointsList } from '@/features/safe-points/components/safe-points-li
 import { useAutocompleteSuggestions } from '@/hooks/use-autocomplete-suggestions'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useDisclosure, type UseDisclosureReturn } from '@/hooks/use-disclosure'
+import { hasPermission } from '@packages/admin-permissions/has-permission'
 import type { SafePointData } from '@packages/safe-points/schema'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import {
   APIProvider,
   Map,
@@ -35,6 +37,11 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 
 export const Route = createFileRoute('/app/safe-points')({
   component: RouteComponent,
+  beforeLoad({ context }) {
+    if (!hasPermission(context.auth.user?.permissions, 'SAFE_POINTS')) {
+      throw redirect({ to: getDefaultRedirect(context.auth.user) })
+    }
+  },
 })
 
 function RouteComponent() {
