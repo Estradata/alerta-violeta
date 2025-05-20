@@ -18,13 +18,13 @@ import { useUpdateUserStatus } from '@/features/users/api/update-user-status'
 import { ConfirmationDialog } from '@/components/confirmation-dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { EmptyPlaceholder } from '@/components/empty-placeholder'
-import { hasPermission } from '@packages/admin-permissions/has-permission'
+import { hasAuthorization } from '@packages/admin-permissions/has-authorization'
 import { getDefaultRedirect } from '@/features/auth/utils/get-default-redirect'
 
 export const Route = createFileRoute('/app/users')({
   component: RouteComponent,
   beforeLoad({ context }) {
-    if (!hasPermission(context.auth.user?.permissions, 'USERS')) {
+    if (!hasAuthorization(context.auth.user?.permissions, 'USERS')) {
       throw redirect({ to: getDefaultRedirect(context.auth.user) })
     }
   },

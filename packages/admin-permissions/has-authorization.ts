@@ -21,12 +21,12 @@ type Permission = {
  *   ],
  * };
  *
- * hasPermission(admin, { module: "post", action: "view" });   // ✅ true
- * hasPermission(admin, { module: "post", action: "update" }); // ✅ true
- * hasPermission(admin, { module: "user", action: "update" }); // ❌ false
- * hasPermission(admin, { module: "invoice", action: "view" }); // ❌ false
+ * hasAuthorization(admin, { module: "post", action: "view" });   // ✅ true
+ * hasAuthorization(admin, { module: "post", action: "update" }); // ✅ true
+ * hasAuthorization(admin, { module: "user", action: "update" }); // ❌ false
+ * hasAuthorization(admin, { module: "invoice", action: "view" }); // ❌ false
  */
-export function hasPermission(
+export function hasAuthorization(
   permissions: Permission[] | undefined,
   module: PermissionModule,
   action: PermissionAction = 'VIEW'

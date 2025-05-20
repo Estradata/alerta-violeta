@@ -22,7 +22,7 @@ import { SafePointsList } from '@/features/safe-points/components/safe-points-li
 import { useAutocompleteSuggestions } from '@/hooks/use-autocomplete-suggestions'
 import { useDebounce } from '@/hooks/use-debounce'
 import { useDisclosure, type UseDisclosureReturn } from '@/hooks/use-disclosure'
-import { hasPermission } from '@packages/admin-permissions/has-permission'
+import { hasAuthorization } from '@packages/admin-permissions/has-authorization'
 import type { SafePointData } from '@packages/safe-points/schema'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import {
@@ -38,7 +38,7 @@ import { useCallback, useMemo, useRef, useState } from 'react'
 export const Route = createFileRoute('/app/safe-points')({
   component: RouteComponent,
   beforeLoad({ context }) {
-    if (!hasPermission(context.auth.user?.permissions, 'SAFE_POINTS')) {
+    if (!hasAuthorization(context.auth.user?.permissions, 'SAFE_POINTS')) {
       throw redirect({ to: getDefaultRedirect(context.auth.user) })
     }
   },

@@ -14,13 +14,13 @@ import { useUiStore } from '@/features/admins/store/ui'
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import type { ColumnDef } from '@tanstack/react-table'
 import { EditIcon, TrashIcon } from 'lucide-react'
-import { hasPermission } from '@packages/admin-permissions/has-permission'
+import { hasAuthorization } from '@packages/admin-permissions/has-authorization'
 import { getDefaultRedirect } from '@/features/auth/utils/get-default-redirect'
 
 export const Route = createFileRoute('/app/admins')({
   component: RouteComponent,
   beforeLoad({ context }) {
-    if (!hasPermission(context.auth.user?.permissions, 'ADMINS')) {
+    if (!hasAuthorization(context.auth.user?.permissions, 'ADMINS')) {
       throw redirect({ to: getDefaultRedirect(context.auth.user) })
     }
   },
