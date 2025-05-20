@@ -67,7 +67,7 @@ export function AdminForm({
     if (roleId === 'NONE') {
       form.setValue('customPermissions', [])
     } else {
-      const permissions = roles.find((r) => r.id)?.permissionIds || []
+      const permissions = roles.find((r) => r.id === roleId)?.permissionIds || []
       form.setValue('customPermissions', permissions)
     }
   }

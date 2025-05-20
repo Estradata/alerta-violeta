@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { MODULE_PERMISSIONS_MAP } from '@packages/admin-permissions/consts'
 import { PermissionId } from '@packages/admin-permissions/schema'
 
+// TODO: Create our own 'SUPER ADMIN PANEL' to manage available roles, modules, actions, etc.
 export const seedDB: RequestHandler = async (_, res) => {
   const data: Permission[] = []
 
@@ -21,18 +22,64 @@ export const seedDB: RequestHandler = async (_, res) => {
     })
   })
 
-  // Superadmin: Full system control (users, alerts, markers, settings).
-  // Monitoring Operator: Only view map safety locations and reports.
-  // Marker Editor: Full access to manage safety locations (Including bulk import/export).
-  // Alert Tracker: Full Access to follow up on alerts.
-
+  /**
+   * Create Permissions
+   */
   try {
     await db.permission.createMany({
       data,
     })
-
-    res.json({ ok: true, data }).send()
   } catch {
-    res.json({ ok: false, data: null }).send()
+    console.log('Permisos duplicados, saltando...')
   }
+
+  /**
+   * Create Roles
+   * Marker Editor: Full access to manage safety locations (Including bulk import/export).
+   *
+   */
+  try {
+    // Superadmin: Full system control (users, alerts, markers, settings).
+    await createAdminRole('SUPER_ADMIN', 'Super Admin', [
+      'ADMINS.UPDATE',
+      'SAFE_POINTS.UPDATE',
+      'USERS.UPDATE',
+    ])
+
+    // Monitoring Operator: Only view map safety locations and reports.
+    await createAdminRole('MONITORING_OPERATOR', 'Operador de Monitoreo', [
+      'SAFE_POINTS.VIEW',
+    ])
+
+    // Marker Editor: Full access to manage safety locations (Including bulk import/export).
+    await createAdminRole('MARKER_EDITOR', 'Editor de Marcadores', [
+      'SAFE_POINTS.UPDATE',
+    ])
+
+    // Alert Tracker: Full Access to follow up on alerts.
+    await createAdminRole('ALERT_TRACKER', 'Editor de Marcadores', [])
+  } catch(err) {
+    console.log(err)
+    console.log('Roles duplicados, saltando...')
+  }
+
+  res.json({ ok: true, data })
+}
+
+async function createAdminRole(
+  id: string,
+  name: string,
+  permissions: PermissionId[]
+) {
+  await db.adminRole.create({
+    data: {
+      id,
+      name,
+      permissions: {
+        connect: permissions.map((id) => ({
+          id,
+        })),
+      },
+    },
+  })
 }

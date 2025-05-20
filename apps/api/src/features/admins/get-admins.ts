@@ -16,6 +16,9 @@ export const getAdmins: RequestHandler = async (req, res, next) => {
           },
         },
       },
+      orderBy: {
+        createdAt: 'desc'
+      }
     })
 
     res.json({
