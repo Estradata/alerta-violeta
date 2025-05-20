@@ -60,7 +60,7 @@ export function AppSidebar({ user }: { user: AuthAdminUser }) {
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
-        <p>aqui va algo</p>
+        <p>Lia-V</p>
       </SidebarHeader>
 
       <SidebarContent>
