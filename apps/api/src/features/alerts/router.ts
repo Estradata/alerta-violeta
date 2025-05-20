@@ -1,8 +1,8 @@
 import express from 'express'
 import { getAlerts } from '@/features/alerts/get-alerts'
 
-const router = express.Router()
+const alertsRouter = express.Router()
 
-router.get('/', getAlerts)
+alertsRouter.get('/', getAlerts)
 
-export default router
+export default alertsRouter

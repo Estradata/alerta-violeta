@@ -1,4 +1,4 @@
-import { checkIsUserEmailAvailable } from '@/features/auth/utils'
+import { checkIsUserEmailTaken } from '@/features/auth/utils'
 import { db } from '@/lib/db'
 import { ValidationError } from '@packages/errors'
 import { encodeUserToken } from '@/lib/jwt'
@@ -14,8 +14,8 @@ export const registerUser: RequestHandler = async (req, res, next) => {
     /**
      * Check email available
      */
-    const available = await checkIsUserEmailAvailable(data.email)
-    if (!available)
+    const isEmailTaken = await checkIsUserEmailTaken(data.email)
+    if (isEmailTaken)
       throw new ValidationError({
         email: 'Este correo no está disponible',
       })

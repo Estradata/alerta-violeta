@@ -39,6 +39,7 @@ model User {
   status UserStatus @default(ACTIVE)
   alerts Alert[]
 
+  lastLogin DateTime @default(now()) @map("last_login")
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("users")
@@ -63,11 +64,12 @@ model SafePoint {
   account   Account @relation(fields: [accountId], references: [id])
   accountId String  @map("account_id")
 
-  name    String
-  address String
-  lat     Float
-  lng     Float
-  type    String
+  name          String
+  address       String
+  googlePlaceId String? @map("google_place_id")
+  lat           Float
+  lng           Float
+  type          String
 
   @@map("safe_points")
 }
@@ -91,13 +93,15 @@ model Admin {
   accountId String  @map("account_id")
 
   email    String @unique
+  name     String
   password String
 
   // A defined role, with pre-defined permissions
-  role              AdminRole?   @relation(fields: [roleId], references: [id])
+  role              AdminRole?    @relation(fields: [roleId], references: [id], onDelete: SetNull)
   roleId            String?
   // OR a list of custom permissions
   customPermissions Permission[]
+  activities        ActivityLog[]
 
   createdAt DateTime @default(now()) @map("created_at")
 
@@ -105,7 +109,7 @@ model Admin {
 }
 
 model AdminRole {
-  id   String @id @default(uuid())
+  id   String @id
   name String @unique
 
   permissions Permission[]
@@ -114,14 +118,42 @@ model AdminRole {
   @@map("admin_roles")
 }
 
+enum PermissionModule {
+  ADMINS
+  USERS
+  SAFE_POINTS
+}
+
+enum PermissionAction {
+  VIEW
+  UPDATE
+
+  @@map("Action")
+}
+
 model Permission {
-  id     String @id @default(uuid())
-  module String
-  action String
+  id     String           @id
+  module PermissionModule
+  action PermissionAction
 
   roles AdminRole[]
   users Admin[]
 
   @@unique([module, action])
   @@map("permissions")
+}
+
+model ActivityLog {
+  id     String            @id @default(uuid())
+  module PermissionModule?
+  action String
+
+  admin   Admin  @relation(fields: [adminId], references: [id])
+  adminId String @map("admin_id")
+
+  description String? @db.Text()
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("activity_log")
 }

@@ -16,17 +16,14 @@ import {
 } from '@packages/emergency-contacts/schema'
 import { useCreateEmergencyContact } from '@/features/emergency-contacts/api/create-emergency-contact'
 import { EmergencyContactForm } from '@/features/emergency-contacts/components/emergency-contact-form'
-import { useAuth } from '@/auth'
 
 const defaultValues: EmergencyContactData = {
   name: '',
-  accountId: '',
   description: '',
   phone: '',
 }
 
 export function CreateEmergencyContact({ className }: { className?: string }) {
-  const user = useAuth().user!
   const { open, onOpenChange, onClose } = useDisclosure()
   const form = useForm<EmergencyContactData>({
     resolver: zodResolver(emergencyContactSchema),
@@ -41,10 +38,7 @@ export function CreateEmergencyContact({ className }: { className?: string }) {
   })
 
   function onSubmit(data: EmergencyContactData) {
-    createMutation.mutate({
-      ...data,
-      accountId: user.accountId,
-    })
+    createMutation.mutate(data)
   }
 
   return (

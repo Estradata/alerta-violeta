@@ -1,8 +1,13 @@
-import type { AuthUser } from '@packages/auth/types'
+import type { AuthAdminUser } from '@packages/auth-admin/types'
 import { useGlobalStore } from '@/store/global-store'
 import { storagePrefix } from '@/config'
 import { useRouter } from '@tanstack/react-router'
 import { useCallback } from 'react'
+import type {
+  PermissionAction,
+  PermissionModule,
+} from '@packages/admin-permissions/schema'
+import { hasAuthorization } from '@packages/admin-permissions/has-authorization'
 
 const key = `${storagePrefix}_token`
 
@@ -18,26 +23,17 @@ function setStoredToken(token: string | null) {
   }
 }
 
-export function getRedirectPath(role: AuthUser['role']) {
-  switch (role) {
-    case 'ADMIN':
-      return '/app/dashboard'
-
-    case 'MEMBER':
-      return '/app/dashboard'
-  }
-}
-
 export function useAuth(): AuthContext {
   const router = useRouter()
   const user = useGlobalStore((s) => s.user)
   const setUser = useGlobalStore((s) => s.setUser)
 
   const login = useCallback(
-    (user: AuthUser, token: string) => {
+    (user: AuthAdminUser, token: string) => {
       setUser(user)
       setStoredToken(token)
-      router?.navigate({ to: getRedirectPath(user.role) })
+      // TODO:
+      router?.navigate({ to: '/app/safe-points' })
     },
     [router, setUser]
   )
@@ -58,7 +54,27 @@ export function useAuth(): AuthContext {
 
 export type AuthContext = {
   isAuthenticated: boolean
-  user: AuthUser | null
-  login: (user: AuthUser, token: string) => void
+  user: AuthAdminUser | null
+  login: (user: AuthAdminUser, token: string) => void
   logout: () => void
+}
+
+export function Auth({
+  children,
+  fallback = null,
+  module,
+  action = 'VIEW',
+}: {
+  children: React.ReactNode
+  fallback?: React.ReactNode
+  module: PermissionModule
+  action?: PermissionAction
+}) {
+  const user = useAuth().user
+
+  if (!hasAuthorization(user?.permissions, module, action)) {
+    return fallback
+  }
+
+  return children
 }

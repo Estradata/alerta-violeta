@@ -16,12 +16,10 @@ import {
 } from '@packages/safe-points/schema'
 import { useCreateSafePoint } from '@/features/safe-points/api/create-safe-point'
 import { SafePointForm } from '@/features/safe-points/components/safe-point-form'
-import { useAuth } from '@/auth'
 import { CheckCheckIcon } from 'lucide-react'
 
 const defaultValues: SafePointData = {
   name: '',
-  accountId: '',
   address: '',
   lat: 0,
   lng: 0,
@@ -35,18 +33,15 @@ export function CreateSafePoint({
 }: {
   disabled?: boolean
   clearMarker?: () => void
-  data: {
-    address?: string
-    lat: number
-    lng: number
-  }
+  data: Partial<SafePointData>
 }) {
-  const user = useAuth().user!
   const { open, onOpenChange, onClose } = useDisclosure()
   const form = useForm<SafePointData>({
     resolver: zodResolver(safePointSchema),
     values: {
       ...defaultValues,
+      name: data.name || '',
+      googlePlaceId: data.googlePlaceId || null,
       address: data?.address || '',
       lat: data?.lat || 0,
       lng: data?.lng || 0,
@@ -62,11 +57,7 @@ export function CreateSafePoint({
   })
 
   function onSubmit(data: SafePointData) {
-    console.log(data)
-    createMutation.mutate({
-      ...data,
-      accountId: user.accountId,
-    })
+    createMutation.mutate(data)
   }
 
   return (

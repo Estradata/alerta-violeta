@@ -10,8 +10,7 @@ export const updateEmergencyContact: RequestHandler<{ id: string }> = async (
 ) => {
   try {
     const id = req.params.id
-
-    const { accountId, ...data } = emergencyContactSchema.parse(req.body)
+    const data = emergencyContactSchema.parse(req.body)
     const emergencyContact = await db.emergencyContact.update({
       where: { id },
       data,

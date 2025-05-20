@@ -31,6 +31,14 @@ export function SafePointForm({
           required
         />
 
+        <ControlledInput
+          control={form.control}
+          name='address'
+          label='Dirección'
+          placeholder='Dirección del punto'
+          required
+        />
+
         <ControlledSelect
           control={form.control}
           name='type'

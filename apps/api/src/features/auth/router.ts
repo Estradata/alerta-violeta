@@ -6,8 +6,8 @@ import { verifyUserToken } from '@/features/auth/verify-user-token'
 const authRouter = express.Router()
 
 authRouter
-  .post('/register', registerUser)
-  .post('/verify', verifyUserToken)
   .post('/login', loginUser)
+  .post('/verify', verifyUserToken)
+  .post('/register', registerUser)
 
 export default authRouter

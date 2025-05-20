@@ -3,6 +3,7 @@ import { TokenError } from '@packages/errors'
 import { decodeAdminToken } from '@/lib/jwt'
 import { LoginResponse } from '@packages/auth-admin/types'
 import { RequestHandler } from 'express'
+import { getAdminPermissions } from '@/features/admins/utils'
 
 export const verifyAdminToken: RequestHandler = async (req, res, next) => {
   try {
@@ -27,16 +28,31 @@ export const verifyAdminToken: RequestHandler = async (req, res, next) => {
       where: {
         id: decodedToken.id,
       },
+      include: {
+        role: {
+          include: {
+            permissions: true,
+          },
+        },
+        customPermissions: true,
+      },
     })
 
     if (!admin) throw new TokenError()
 
     const { password, ...data } = admin
+    const permissions = getAdminPermissions(admin)
 
     res.status(202).json({
       message: 'Login successful',
       data: {
-        user: data,
+        user: {
+          name: data.name,
+          accountId: data.accountId,
+          email: data.email,
+          id: data.id,
+          permissions,
+        },
         token,
       },
     } satisfies LoginResponse)

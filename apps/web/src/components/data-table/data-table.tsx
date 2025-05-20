@@ -39,6 +39,7 @@ interface TableProps<TData, TValue> {
   rowsPerPageLabel?: string
   onMultiDelete?: (selectedRows: TData[]) => void
   children?: React.ReactNode
+  enableMultiDelete?: boolean
 }
 
 export function Table<TData, TValue>({
@@ -49,6 +50,7 @@ export function Table<TData, TValue>({
   searchColumn,
   filters = [],
   onMultiDelete,
+  enableMultiDelete = true,
   children,
 }: TableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({})
@@ -98,7 +100,7 @@ export function Table<TData, TValue>({
             />
           )}
 
-          {onMultiDelete && selectedItemsCount > 0 && (
+          {onMultiDelete && selectedItemsCount > 0 && enableMultiDelete && (
             <Button
               size='sm'
               variant='outline'

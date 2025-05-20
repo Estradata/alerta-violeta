@@ -5,7 +5,6 @@ import { z } from 'zod'
  */
 export const emergencyContactSchema = z.object({
   id: z.string().optional(),
-  accountId: z.string(),
   name: z.string(),
   phone: z.string(),
   description: z.string(),

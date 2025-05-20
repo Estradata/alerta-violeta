@@ -1,22 +1,21 @@
+import { Badge } from '@/components/ui/badge'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import type { GetSafePointsResponse } from '@packages/safe-points/types'
 import { AdvancedMarker } from '@vis.gl/react-google-maps'
 import { ShieldIcon } from 'lucide-react'
+
+type SafePoint = GetSafePointsResponse['data'][number]
 
 export function SafePointMapMarker({
   point,
   selected,
   selectPoint,
 }: {
-  point: {
-    id: string
-    name: string
-    lat: number
-    lng: number
-  }
+  point: SafePoint
   selected?: boolean
   selectPoint: (id: string | null) => void
 }) {
@@ -42,7 +41,17 @@ export function SafePointMapMarker({
 
       <PopoverContent className='w-56'>
         <div>
-          <h1 className='text-sm font-medium'>{point.name}</h1>
+          <h3 className='font-medium'>{point.name}</h3>
+
+          <p className='text-sm text-muted-foreground line-clamp-2'>
+            {point.address}
+          </p>
+
+          <div className='mt-2'>
+            <Badge variant='outline' className='text-xs'>
+              {point.type as string}
+            </Badge>
+          </div>
         </div>
       </PopoverContent>
     </Popover>

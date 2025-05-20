@@ -7,6 +7,7 @@ export type SafePoint = {
   id: string
   accountId: string
   name: string
+  googlePlaceId: string | null
   address: string
   lat: number
   lng: number

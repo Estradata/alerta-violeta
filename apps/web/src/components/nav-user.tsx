@@ -16,9 +16,9 @@ import {
 import { sleep } from '@/utils/sleep'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import type { AuthUser } from '@packages/auth/types'
+import type { AuthAdminUser } from '@packages/auth-admin/types'
 
-export function NavUser({ user }: { user: AuthUser }) {
+export function NavUser({ user }: { user: AuthAdminUser }) {
   const { isMobile, setOpen, setOpenMobile } = useSidebar()
   const [loading, setLoading] = useState(false)
 

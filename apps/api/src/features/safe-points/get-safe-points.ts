@@ -1,10 +1,17 @@
 import { db } from '@/lib/db'
-import type { GetSafePointsResponse } from '@packages/safe-points/types'
 import { RequestHandler } from 'express'
+import type { GetSafePointsResponse } from '@packages/safe-points/types'
 
-export const getSafePoints: RequestHandler = async (_, res, next) => {
+export const getSafePoints: RequestHandler = async (req, res, next) => {
   try {
-    const data = await db.safePoint.findMany()
+    const user = req.admin || req.user
+
+    const data = await db.safePoint.findMany({
+      where: {
+        accountId: user.accountId,
+      },
+    })
+
     res.json({ data } satisfies GetSafePointsResponse)
   } catch (err) {
     next(err)

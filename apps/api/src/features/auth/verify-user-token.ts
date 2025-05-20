@@ -1,5 +1,5 @@
 import { db } from '@/lib/db'
-import { TokenError } from '@packages/errors'
+import { TokenError, UnauthorizedError } from '@packages/errors'
 import { decodeUserToken } from '@/lib/jwt'
 import { LoginResponse } from '@packages/auth/types'
 import { RequestHandler } from 'express'
@@ -30,6 +30,19 @@ export const verifyUserToken: RequestHandler = async (req, res, next) => {
     })
 
     if (!user) throw new TokenError()
+
+    /**
+     * Update last login
+     */
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        lastLogin: new Date(),
+      },
+    })
+
+    if (user.status === 'BLOCKED')
+      throw new UnauthorizedError('Esta cuenta se encuentra bloqueada')
 
     const { password, ...data } = user
 
