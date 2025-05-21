@@ -84,12 +84,25 @@ function Content() {
     if (event.detail.latLng) {
       const lat = event.detail.latLng.lat
       const lng = event.detail.latLng.lng
+      const geocoder = new google.maps.Geocoder()
 
-      setMarker((prev) => ({
-        ...prev,
-        lat,
-        lng,
-      }))
+      geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+        let address = ''
+
+        if (status === 'OK' && results && results.length > 0) {
+          const place = results[0] // Most relevant result
+          address = place.formatted_address || ''
+        } else {
+          console.error('Geocoder failed due to:', status)
+        }
+
+        setMarker((prev) => ({
+          ...prev,
+          lat,
+          lng,
+          address,
+        }))
+      })
     }
   }
 

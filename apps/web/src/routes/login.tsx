@@ -26,7 +26,7 @@ function LoginComponent() {
 
           <h1 className='text-2xl font-semibold'>{siteConfig.name}</h1>
 
-          <div className='text-sm flex items-center gap-1 text-muted-foreground'>
+          <div className='text-sm flex items-center gap-1 text-muted-foreground hidden'>
             <p>¿No tienes una cuenta?</p>
             <Link to='/login' className='underline underline-offset-2'>
               Regístrate aquí
