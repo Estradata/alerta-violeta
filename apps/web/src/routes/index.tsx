@@ -98,18 +98,18 @@ function HomeComponent() {
                   <MapPinnedIcon />
                 </div>
                 Gestión de puntos seguros
-                <div className='absolute -right-2 -top-2 -translate-y-1/2 translate-x-1/2 rotate-180'>
+                <div className='absolute -right-2 -top-2 -translate-y-1/2 translate-x-1/2 rotate-180 opacity-0 an-opacity delay-2'>
                   <img src='/figure-2.svg' />
                 </div>
               </div>
 
-              <div className='absolute left-0 bottom-40 -translate-x-1/2 rounded-full bg-white shadow-2xl flex items-center gap-3 p-2 pr-5 capitalize fade-in-once opacity-0 delay-animation'>
+              <div className='absolute left-0 bottom-40 -translate-x-1/2 rounded-full bg-white shadow-2xl flex items-center gap-3 p-2 pr-5 capitalize fade-in-once opacity-0 delay-1'>
                 <div className='h-10 flex justify-center items-center aspect-square rounded-full bg-violet-600 text-white'>
                   <ShieldAlertIcon />
                 </div>
                 Alertas en tiempo real
                 {/* 24x7 Customer Support */}
-                <div className='absolute -left-2 -bottom-2 translate-y-1/2 -translate-x-1/2'>
+                <div className='absolute -left-2 -bottom-2 translate-y-1/2 -translate-x-1/2 opacity-0 an-opacity delay-2'>
                   <img src='/figure-2.svg' />
                 </div>
               </div>

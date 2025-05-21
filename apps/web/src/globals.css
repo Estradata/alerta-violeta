@@ -170,12 +170,28 @@ body,
   }
 }
 
+@keyframes opacity {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 .fade-in-once {
   animation: fade-in 0.6s ease-out forwards;
   animation-delay: 0.2s;
 }
 
+.an-opacity {
+  animation: opacity 0.6s ease-out forwards;
+}
 
-.delay-animation {
+.delay-1 {
   animation-delay: 0.5s;
+}
+
+.delay-2 {
+  animation-delay: 1.5s;
 }
