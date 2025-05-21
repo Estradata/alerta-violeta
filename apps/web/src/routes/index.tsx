@@ -35,8 +35,8 @@ const avatars = [
 
 function HomeComponent() {
   return (
-    <div className='w-full flex flex-col min-h-screen overflow-hidden'>
-      <div className='bg-[#f6f6f6] w-full flex-1 grid grid-cols-12 pl-10 relative'>
+    <div className='w-full flex flex-col min-h-screen overflow-hidden bg-[#f6f6f6]'>
+      <div className='w-full flex-1 grid grid-cols-12 pl-10 relative max-w-7xl mx-auto'>
         <Pattern className='absolute md:-translate-x-1/6    [mask-image:linear-gradient(to_top,black,transparent)]  md:[mask-image:linear-gradient(to_right,black,transparent)] -bottom-60 md:top-0' />
 
         <div className='w-full px-10 py-4 flex justify-end col-span-12 absolute top-0 left-0'>
