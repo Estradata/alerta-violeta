@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { createFileRoute } from '@tanstack/react-router'
+import { Button } from '@/components/ui/button'
+import { createFileRoute, Link } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
   component: HomeComponent,
@@ -36,7 +37,11 @@ function HomeComponent() {
   return (
     <div className='min-h-full'>
       <div className='w-full min-h-screen flex flex-col'>
-        <div className='w-full h-10'></div>
+        <div className='w-full px-10 py-4 flex justify-end'>
+          <Button asChild className='rounded-sm'>
+            <Link to='/login'>Iniciar sesión</Link>
+          </Button>
+        </div>
 
         <div className='bg-[#f6f6f6] w-full flex-1 grid grid-cols-12 relative pl-10 rounded-b-4xl'>
           <div className='w-full h-full flex flex-col items-start justify-center text-start gap-16 col-span-5'>
