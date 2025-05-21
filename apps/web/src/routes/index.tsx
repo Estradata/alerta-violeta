@@ -49,13 +49,13 @@ function HomeComponent() {
             </Button>
           </div>
 
-          <div className='w-full h-full flex flex-col items-start justify-center text-start gap-20 col-span-5'>
+          <div className='w-full h-full flex flex-col items-start justify-center text-start gap-20 col-span-12 md:col-span-5 pt-40 md:pt-0'>
             <header className='flex flex-col items-start text-start gap-5'>
-              <h2 className='capitalize clear-start text-lg font-medium'>
+              <h2 className='capitalize clear-start text-base md:text-lg font-medium'>
                 Plataforma integral de gestión de emergencias
               </h2>
 
-              <h1 className='text-6xl font-semibold tracking-tight capitalize'>
+              <h1 className='text-5xl md:text-6xl font-semibold tracking-tight capitalize'>
                 Protege con{' '}
                 <span className='text-violet-600'>{siteConfig.name}</span>
               </h1>
@@ -91,7 +91,7 @@ function HomeComponent() {
             </div>
           </div>
 
-          <div className='w-full h-full flex justify-center items-end col-span-7'>
+          <div className='w-full h-full md:flex justify-center items-end col-span-7 hidden'>
             <div className='relative'>
               <div className='absolute right-0 top-20 translate-x-1/2 rounded-full bg-white shadow-2xl flex items-center gap-3 p-2 pr-5 capitalize'>
                 <div className='h-10 flex justify-center items-center aspect-square rounded-full bg-violet-600 text-white'>
