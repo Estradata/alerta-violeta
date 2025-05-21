@@ -52,7 +52,6 @@ export default function LoginForm() {
           "Error",
           "Correo o contrasena erroneas, porfavor intenta de nuevo.",
         );
-        console.log("++++ ERRR", err);
       },
     });
   };

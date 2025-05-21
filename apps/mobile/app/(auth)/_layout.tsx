@@ -11,7 +11,6 @@ export default function AuthLayout() {
     if (user) {
       router.replace("/(tabs)");
     }
-    console.log("AuthLayout loaded");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
