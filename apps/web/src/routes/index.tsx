@@ -1,7 +1,9 @@
 import Pattern from '@/components/pattern'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { siteConfig } from '@/config'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { MapPinnedIcon, ShieldAlertIcon } from 'lucide-react'
 
 export const Route = createFileRoute('/')({
   component: HomeComponent,
@@ -9,28 +11,24 @@ export const Route = createFileRoute('/')({
 
 const avatars = [
   {
-    src: 'https://github.com/shadcn.png',
-    alt: 'Shadcn',
+    src: '/pp-1.png',
+    alt: 'Avatar 1',
   },
   {
-    src: 'https://github.com/shadcn.png',
-    alt: 'Shadcn',
+    src: '/pp-2.png',
+    alt: 'Avatar 2',
   },
   {
-    src: 'https://github.com/shadcn.png',
-    alt: 'Shadcn',
+    src: '/pp-3.png',
+    alt: 'Avatar 3',
   },
   {
-    src: 'https://github.com/shadcn.png',
-    alt: 'Shadcn',
-  },
-  {
-    src: 'https://github.com/shadcn.png',
-    alt: 'Shadcn',
+    src: '/pp-4.png',
+    alt: 'Avatar 4',
   },
   {
     src: '/plus.svg',
-    alt: 'Shadcn',
+    alt: 'Y más',
   },
 ]
 
@@ -41,55 +39,94 @@ function HomeComponent() {
         <div className='bg-[#f6f6f6] w-full flex-1 grid grid-cols-12 pl-10 rounded-b-4xl relative'>
           <Pattern className='absolute -translate-x-1/6 [mask-image:linear-gradient(to_right,black,transparent)]' />
 
-          <div className='w-full px-10 py-4 flex justify-end col-span-12'>
-            <Button asChild className='rounded-sm'>
+          <div className='w-full px-10 py-4 flex justify-end col-span-12 absolute top-0 left-0'>
+            <Button
+              asChild
+              size='lg'
+              className='rounded-full bg-violet-600 hover:bg-violet-900'
+            >
               <Link to='/login'>Iniciar sesión</Link>
             </Button>
           </div>
 
-          <div className='w-full h-full flex flex-col items-start justify-center text-start gap-16 col-span-5'>
-            <header>
+          <div className='w-full h-full flex flex-col items-start justify-center text-start gap-20 col-span-5'>
+            <header className='flex flex-col items-start text-start gap-5'>
               <h2 className='capitalize clear-start text-lg font-medium'>
-                The best online clothing store
+                Plataforma integral de gestión de emergencias
               </h2>
 
               <h1 className='text-6xl font-semibold tracking-tight capitalize'>
-                Your one-stop <br />
-                <span className='text-violet-600'>clothing store app</span>
+                Protege con{' '}
+                <span className='text-violet-600'>{siteConfig.name}</span>
               </h1>
+
+              <p className='text-muted-foreground'>
+                Visualiza y atiende alertas en tiempo real, gestiona espacios
+                seguros y directorios de apoyo, revisa eventos pasados y obtén
+                reportes detallados para mejorar la respuesta ciudadana.
+              </p>
             </header>
 
-            <p className='text-muted-foreground'>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex
-              obcaecati quas ducimus iste voluptatum suscipit voluptates.
-              Corrupti omnis saepe quidem reprehenderit quasi incidunt cumque
-              labore hic maxime! Quod, fugiat suscipit.
-            </p>
-
-            <div className='flex gap-5'>
+            <div className='flex gap-5 h-16'>
               <img src='/app-store.svg' className='h-16 w-auto' />
               <img src='/google-play.svg' className='h-16 w-auto' />
             </div>
 
-            <div className='flex -space-x-4'>
-              {avatars.map((avatar, i) => {
-                return (
-                  <Avatar className='w-16 h-16 border-4 border-white' key={i}>
-                    <AvatarImage src={avatar.src} />
-                    <AvatarFallback>{avatar.alt}</AvatarFallback>
-                  </Avatar>
-                )
-              })}
+            <div className='flex gap-10 items-center'>
+              <div className='flex -space-x-4'>
+                {avatars.map((avatar, i) => {
+                  return (
+                    <Avatar className='w-16 h-16 border-4 border-white' key={i}>
+                      <AvatarImage src={avatar.src} />
+                      <AvatarFallback className='bg-white'></AvatarFallback>
+                    </Avatar>
+                  )
+                })}
+              </div>
+
+              <div>
+                <p className='text-4xl font-semibold'>50k+</p>
+                <p className='text-muted-foreground'>Usuarios protegidos</p>
+              </div>
             </div>
           </div>
 
           <div className='w-full h-full flex justify-center items-end col-span-7'>
-            <img src='/iphone.png' alt='Mockup' className='w-[400px] h-auto' />
+            <div className='relative'>
+              <div className='absolute right-0 top-20 translate-x-1/2 rounded-full bg-white shadow-2xl flex items-center gap-3 p-2 pr-5 capitalize'>
+                <div className='h-10 flex justify-center items-center aspect-square rounded-full bg-violet-600 text-white'>
+                  <MapPinnedIcon />
+                </div>
+                Gestión de puntos seguros
+                <div className='absolute -right-2 -top-2 -translate-y-1/2 translate-x-1/2 rotate-180'>
+                  <img src='/figure-2.svg' />
+                </div>
+              </div>
+
+              <div className='absolute left-0 bottom-40 -translate-x-1/2 rounded-full bg-white shadow-2xl flex items-center gap-3 p-2 pr-5 capitalize'>
+                <div className='h-10 flex justify-center items-center aspect-square rounded-full bg-violet-600 text-white'>
+                  <ShieldAlertIcon />
+                </div>
+                Alertas en tiempo real
+                {/* 24x7 Customer Support */}
+                <div className='absolute -left-2 -bottom-2 translate-y-1/2 -translate-x-1/2'>
+                  <img src='/figure-2.svg' />
+                </div>
+              </div>
+
+              <div className='absolute left-0 top-0 -translate-x-1/2 -translate-y-1/2'>
+                <img src='/figure.svg' />
+              </div>
+
+              <img
+                src='/iphone.png'
+                alt='Mockup'
+                className='w-[400px] h-auto z-50'
+              />
+            </div>
           </div>
         </div>
       </div>
-
-      {/* <div className='h-40 w-full'></div> */}
     </div>
   )
 }
