@@ -93,7 +93,7 @@ function HomeComponent() {
 
           <div className='w-full h-full md:flex justify-center items-end col-span-7 hidden'>
             <div className='relative'>
-              <div className='absolute right-0 top-20 translate-x-1/2 rounded-full bg-white shadow-2xl flex items-center gap-3 p-2 pr-5 capitalize'>
+              <div className='absolute right-0 top-20 translate-x-1/2 rounded-full bg-white shadow-2xl flex items-center gap-3 p-2 pr-5 capitalize fade-in-once opacity-0'>
                 <div className='h-10 flex justify-center items-center aspect-square rounded-full bg-violet-600 text-white'>
                   <MapPinnedIcon />
                 </div>
@@ -103,7 +103,7 @@ function HomeComponent() {
                 </div>
               </div>
 
-              <div className='absolute left-0 bottom-40 -translate-x-1/2 rounded-full bg-white shadow-2xl flex items-center gap-3 p-2 pr-5 capitalize'>
+              <div className='absolute left-0 bottom-40 -translate-x-1/2 rounded-full bg-white shadow-2xl flex items-center gap-3 p-2 pr-5 capitalize fade-in-once opacity-0 delay-animation'>
                 <div className='h-10 flex justify-center items-center aspect-square rounded-full bg-violet-600 text-white'>
                   <ShieldAlertIcon />
                 </div>
