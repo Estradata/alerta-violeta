@@ -17,8 +17,10 @@ import { sleep } from '@/utils/sleep'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import type { AuthAdminUser } from '@packages/auth-admin/types'
+import { useAuth } from '@/auth'
 
 export function NavUser({ user }: { user: AuthAdminUser }) {
+  const auth = useAuth()
   const { isMobile, setOpen, setOpenMobile } = useSidebar()
   const [loading, setLoading] = useState(false)
 
@@ -29,9 +31,9 @@ export function NavUser({ user }: { user: AuthAdminUser }) {
 
     try {
       await sleep(500)
-      //  logout()
+      auth.logout()
     } catch {
-      toast.error("Couldn't logout, try again.")
+      toast.error("No se pudo cerrar la sesión")
       setLoading(false)
     }
   }

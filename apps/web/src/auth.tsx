@@ -8,6 +8,7 @@ import type {
   PermissionModule,
 } from '@packages/admin-permissions/schema'
 import { hasAuthorization } from '@packages/admin-permissions/has-authorization'
+import { getDefaultRedirect } from '@/features/auth/utils/get-default-redirect'
 
 const key = `${storagePrefix}_token`
 
@@ -32,8 +33,7 @@ export function useAuth(): AuthContext {
     (user: AuthAdminUser, token: string) => {
       setUser(user)
       setStoredToken(token)
-      // TODO:
-      router?.navigate({ to: '/app/safe-points' })
+      router?.navigate({ to: getDefaultRedirect(user) })
     },
     [router, setUser]
   )
