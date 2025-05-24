@@ -17,13 +17,13 @@ const queryClient = new QueryClient();
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
-  const { user } = useAuth();
+  const { token } = useAuth();
 
   return (
     <GluestackUIProvider mode="light">
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack screenOptions={{ headerShown: false }}>
-          {user ? (
+          {token ? (
             <Stack.Screen name="(tabs)" />
           ) : (
             <Stack.Screen name="(auth)" />

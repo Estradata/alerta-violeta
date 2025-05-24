@@ -1,3 +1,3 @@
 export enum mapsAPI {
-  safePoints = "/safe-points",
+  safePoints = "/safe-points/",
 }

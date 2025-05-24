@@ -4,15 +4,15 @@ import { useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 
 export default function AuthLayout() {
-  const { user } = useAuth();
+  const { token } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (user) {
+    if (token) {
       router.replace("/(tabs)");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [token]);
 
   return (
     <Stack

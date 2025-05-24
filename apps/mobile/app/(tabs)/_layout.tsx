@@ -11,15 +11,15 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { user } = useAuth();
+  const { token } = useAuth();
   const router = useRouter();
 
   React.useEffect(() => {
-    if (!user) {
+    if (!token) {
       router.replace("/(auth)");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
+  }, [token]);
 
   return (
     <Tabs

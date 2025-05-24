@@ -48,7 +48,7 @@ export default function SignupForm() {
 
   const onSubmit = (data: SignupSchema) => {
     const dataFormated = {
-      accountId: "eba15c59-739a-469c-bf8a-093b40d97a8d",
+      accountId: "aeb2b5ba-50cd-4315-b041-4c07bce96f67",
       name: data.name,
       username: data.name,
       email: data.email,
@@ -57,6 +57,7 @@ export default function SignupForm() {
     mutate(dataFormated, {
       onSuccess: (response) => {
         const { token, user } = response.data;
+        Alert.alert("Cuenta creada!.");
         login(token, user);
       },
       onError: (err) => {
@@ -71,11 +72,6 @@ export default function SignupForm() {
             emailAccounId ||
             "Ocurrió un error inesperado. Intenta de nuevo.",
         );
-
-        console.log("++++ ERRR", {
-          status: axiosError?.response?.status,
-          errorData: errorResponse,
-        });
       },
     });
   };
